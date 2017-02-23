@@ -1,0 +1,32 @@
+<input type="hidden" id="post-id" value="<%= @post.id %>">
+
+<h2>Show post</h2>
+
+<%= link "Edit", to: user_post_path(@conn, :edit, @user, @post) %>
+<%= link "Back", to: user_post_path(@conn, :index, @user) %>
+
+<ul>
+  <li>
+    <strong>Title:</strong>
+    <%= @post.title %>
+  </li>
+  <li>
+    <strong>Body:</strong>
+    <%= markdown(@post.body) %>
+  </li>
+</ul>
+
+<%= render Pxblog.CommentView, "form.html", changeset: @comment_changeset, action: post_comment_path(@conn, :create, @post) %>
+
+<div class="comments">
+  <h3>Comments</h3>
+  <%= for comment <- @post.comments do %>
+    <%= render Pxblog.CommentView, 
+      "comment.html",
+      comment: comment,
+      author_or_admin: @conn.assigns[:author_or_admin],
+      conn: @conn,
+      post: @post
+    %>
+  <% end %>
+</div>
