@@ -5,6 +5,7 @@ defmodule Pxblog.UserController do
 
   plug :authorize_admin when action in [:new, :create]
   plug :authorize_user when action in [:edit, :update, :delete]
+  plug :add_breadcrumb, name: 'Home', url: '/'
 
   def index(conn, _params) do
     users = Repo.all(User)
@@ -77,7 +78,7 @@ defmodule Pxblog.UserController do
     else
       conn
       |> put_flash(:error, "You are not authorized to modify that user!")
-      |> redirect(to: page_path(conn, :index))
+      |> redirect(to: post_path(conn, :index))
       |> halt()
     end
   end
@@ -89,7 +90,7 @@ defmodule Pxblog.UserController do
     else
       conn
       |> put_flash(:error, "You are not authorized to create new users!")
-      |> redirect(to: page_path(conn, :index))
+      |> redirect(to: post_path(conn, :index))
       |> halt()
     end
   end

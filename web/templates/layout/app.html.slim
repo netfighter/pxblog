@@ -1,0 +1,46 @@
+doctype html
+html lang="en"
+  head
+    meta charset="utf-8"
+    meta content="IE=edge" http-equiv="X-UA-Compatible"
+    meta content="width=device-width, initial-scale=1" name="viewport"
+    meta content="" name="description"
+    meta content="" name="author"
+    = if user = current_user(@conn) do 
+      = tag :meta, name: "channel_token", content: Phoenix.Token.sign(@conn, "user", user.id)
+
+    title Phoenix Tiny Blog
+    link rel="stylesheet" href="#{static_path(@conn, "/css/app.css")}"
+
+  body
+    .container
+      header.header
+        nav role="navigation"
+          ul.nav.nav-pills.pull-right
+            li
+              = if user = current_user(@conn) do
+                | Logged in as 
+                strong
+                  = user.username 
+                br
+                = link "Sign Out", to: session_path(@conn, :delete, user.id), method: :delete
+              - else
+                = link "Sign In", to: session_path(@conn, :new)
+
+        span.logo
+      
+      = render Pxblog.BreadcrumbleView, "breadcrumb.html", breadcrumb_trails: @breadcrumb_trails
+
+      = if info = get_flash(@conn, :info) do
+        p.alert.alert-info.alert-dismissable role="alert"
+          a href="#" class="close" data-dismiss="alert" aria-label="close" &times;
+          span = info
+      = if error = get_flash(@conn, :error) do
+        p.alert.alert-danger.alert-dismissable role="alert"
+          a href="#" class="close" data-dismiss="alert" aria-label="close" &times;
+          span = error
+
+      main role="main"
+        = render @view_module, @view_template, assigns
+
+    script src="#{static_path(@conn, "/js/app.js")}"

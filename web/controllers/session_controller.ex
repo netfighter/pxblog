@@ -3,8 +3,10 @@ defmodule Pxblog.SessionController do
   alias Pxblog.User
   import Comeonin.Bcrypt, only: [checkpw: 2, dummy_checkpw: 0]
   plug :scrub_params, "user" when action in [:create]
+  plug :add_breadcrumb, name: 'Home', url: '/'
 
   def new(conn, _params) do
+    conn = add_breadcrumb(conn, name: 'Sign In', url: session_path(conn, :new))
     render conn, "new.html", changeset: User.changeset(%User{})
   end
 
@@ -22,7 +24,7 @@ defmodule Pxblog.SessionController do
     conn
     |> delete_session(:current_user)
     |> put_flash(:info, "Signed out successfully!")
-    |> redirect(to: page_path(conn, :index))
+    |> redirect(to: post_path(conn, :index))
   end
 
   defp sign_in(user, _password, conn) when is_nil(user) do
@@ -34,7 +36,7 @@ defmodule Pxblog.SessionController do
       conn
       |> put_session(:current_user, %{id: user.id, username: user.username, role_id: user.role_id})
       |> put_flash(:info, "Sign in successful!")
-      |> redirect(to: page_path(conn, :index))
+      |> redirect(to: post_path(conn, :index))
     else
       failed_login(conn)
     end
@@ -45,7 +47,7 @@ defmodule Pxblog.SessionController do
     conn
     |> put_session(:current_user, nil)
     |> put_flash(:error, "Invalid username/password combination!")
-    |> redirect(to: page_path(conn, :index))
+    |> redirect(to: post_path(conn, :index))
     |> halt()
   end
 end

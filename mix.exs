@@ -40,7 +40,10 @@ defmodule Pxblog.Mixfile do
      {:cowboy, "~> 1.0"},
      {:comeonin, "~> 2.5.2"},
      {:ex_machina, "~> 1.0"},
-     {:earmark, "~> 1.0.1"}]
+     {:earmark, "~> 1.0.1"},
+     {:timex, "~> 3.0"},
+     {:phoenix_slime, "~> 0.8.0"},
+     {:breadcrumble, "~> 1.0"}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.

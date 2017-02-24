@@ -16,7 +16,7 @@ defmodule Pxblog.CommentController do
       {:ok, _comment} ->
         conn
         |> put_flash(:info, "Comment created successfully!")
-        |> redirect(to: user_post_path(conn, :show, post.user, post))
+        |> redirect(to: post_path(conn, :show, post))
       {:error, changeset} ->
         render(conn, Pxblog.PostView, "show.html", post: post, user: post.user, comment_changeset: changeset)
     end
@@ -31,11 +31,11 @@ defmodule Pxblog.CommentController do
       {:ok, _} ->
         conn
         |> put_flash(:info, "Comment updated successfully.")
-        |> redirect(to: user_post_path(conn, :show, post.user, post))
+        |> redirect(to: post_path(conn, :show, post))
       {:error, _} ->
         conn
         |> put_flash(:info, "Failed to update comment!")
-        |> redirect(to: user_post_path(conn, :show, post.user, post))
+        |> redirect(to: post_path(conn, :show, post))
     end
   end
 
@@ -45,7 +45,7 @@ defmodule Pxblog.CommentController do
     Repo.get!(Comment, id) |> Repo.delete!
     conn
     |> put_flash(:info, "Deleted comment!")
-    |> redirect(to: user_post_path(conn, :show, post.user, post))
+    |> redirect(to: post_path(conn, :show, post))
   end
 
   defp set_post(conn) do
@@ -60,7 +60,7 @@ defmodule Pxblog.CommentController do
     else
       conn
       |> put_flash(:error, "You are not authorized to modify that comment!")
-      |> redirect(to: page_path(conn, :index))
+      |> redirect(to: post_path(conn, :index))
       |> halt
     end
   end

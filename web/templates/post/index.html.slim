@@ -1,0 +1,19 @@
+div id="posts"
+  .row
+    .col-lg-10
+      h1 Posts
+    .col-lg-2
+      .pull-right
+        a href="#{post_path(@conn, :new)}" class="btn btn-default" aria-label="Center Align"
+          small
+            i> class="glyphicon glyphicon-plus"
+            | New Post
+
+  div#posts-list
+    = for post <- @posts do
+      div
+        h2
+          a href="#{post_path(@conn, :show, post)}" #{post.title}
+        div
+          = markdown(String.slice(post.body, 0..650))
+          hr
