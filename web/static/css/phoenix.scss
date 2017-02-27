@@ -1,14 +1,40 @@
-/* Custom page header */
-.header {
-  border-bottom: 1px solid #e5e5e5;
+//colors
+$color_log_cabin_approx: #222222;
+$color_cod_gray_approx: #080808;
+
+html {
+  position: relative;
+  min-height: 100%;
 }
-.logo {
-  width: 519px;
-  height: 71px;
-  display: inline-block;
-  margin-bottom: 1em;
-  background-image: url("/images/phoenix.png");
-  background-size: 519px 71px;
+body {
+  padding-bottom: 60px;
+}
+
+/* Custom page header */
+a.navbar-brand {
+  padding-left: 50px;
+  background-image: url("/images/phoenix-logo.png");
+  background-repeat: no-repeat;
+  background-position: left center; 
+  background-size: 32%;
+}
+
+/* Sticky footer */
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  background-color: $color_log_cabin_approx;
+  border-top: 1px solid $color_cod_gray_approx;
+  z-index: 2;
+
+  p {
+    margin-top: 20px;
+  }
+  p::before {
+    content: "\00a9 \00a0";
+  }
 }
 
 /* Sign In form */

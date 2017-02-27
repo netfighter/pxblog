@@ -69,8 +69,11 @@ $(".comments").on("click", ".approve", (event) => {
 // REQ 9: Push the DELETED_COMMENT event to the socket but only pass the comment id (that's all we need)
 $(".comments").on("click", ".delete", (event) => {
   event.preventDefault()
-  const commentId = getTargetCommentId(event.currentTarget)
-  channel.push(DELETED_COMMENT, { commentId, postId })
+
+  if (confirm("Are you sure?")) {
+    const commentId = getTargetCommentId(event.currentTarget)
+    channel.push(DELETED_COMMENT, { commentId, postId })
+  }
 })
 
 // REQ 10: Handle receiving the CREATED_COMMENT event

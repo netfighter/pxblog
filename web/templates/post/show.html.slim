@@ -1,11 +1,11 @@
 input type="hidden" id="post-id" value="#{@post.id}"
 
 .row
-  .col-lg-9
+  div class="col-lg-9 col-md-9 col-sm-9 col-xs-7"
     h2 
       = @post.title
   = if @conn.assigns[:author_or_admin] do 
-    .col-lg-3
+    div class="col-lg-3 col-md-3 col-sm-3 col-xs-5"
       .pull-right
         div class="btn-toolbar" role="toolbar"
           div class="btn-group"
