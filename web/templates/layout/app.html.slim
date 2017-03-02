@@ -33,9 +33,14 @@ html lang="en"
                   span< class="caret"
                 ul class="dropdown-menu" role="menu"
                   li
-                    = link to: user_path(@conn, :edit, user.id) do
+                    = link to: account_path(@conn, :edit, user.id) do
                       i> class="glyphicon glyphicon-edit"
                       | Edit account
+                  = if user.admin do
+                    li
+                      = link to: user_path(@conn, :index) do
+                        i> class="glyphicon glyphicon-cog"
+                        | Manage users
                   li
                     a class="sign-out" href="#"
                       i> class="glyphicon glyphicon-log-out"

@@ -19,7 +19,7 @@ defmodule Pxblog.Mixfile do
   def application do
     [mod: {Pxblog, []},
      applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex, :comeonin, :ex_machina]]
+                    :phoenix_ecto, :postgrex, :comeonin, :phoenix_swoosh, :ex_machina]]
   end
 
   # Specifies which paths to compile per environment.
@@ -39,6 +39,7 @@ defmodule Pxblog.Mixfile do
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
      {:comeonin, "~> 2.5.2"},
+     {:phoenix_swoosh, "~> 0.2"},
      {:ex_machina, "~> 1.0"},
      {:earmark, "~> 1.0.1"},
      {:timex, "~> 3.0"},

@@ -23,6 +23,7 @@ defmodule Pxblog.PostController do
       conn.assigns[:user]
       |> build_assoc(:posts)
       |> Post.changeset()
+    render(conn, "new.html", changeset: changeset)
   end
 
   def create(conn, %{"post" => post_params}) do
@@ -113,7 +114,7 @@ defmodule Pxblog.PostController do
   end
 
   defp set_authorization_flag(conn, _opts) do
-    assign(conn, :author_or_admin, is_authorized_user?(conn))
+    assign(conn, :admin, is_authorized_user?(conn))
   end
 
   defp current_user(conn) do

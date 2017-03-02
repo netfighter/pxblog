@@ -20,3 +20,7 @@ config :pxblog, Pxblog.Repo,
 
 # Config ComeOnIn
 config :comeonin, bcrypt_log_rounds: 4
+
+# Config mailer
+config :pxblog, Pxblog.Mailer,
+  adapter: Swoosh.Adapters.Test

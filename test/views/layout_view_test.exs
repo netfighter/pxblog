@@ -10,7 +10,7 @@ defmodule Pxblog.LayoutViewTest do
   end
 
   test "current user returns the user in the session", %{conn: conn, user: user} do
-    conn = post conn, session_path(conn, :create), user: %{username: user.username, password: user.password}
+    conn = post conn, session_path(conn, :create), user: %{email: user.email, password: user.password}
     assert LayoutView.current_user(conn)
   end
 

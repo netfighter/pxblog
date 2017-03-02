@@ -1,4 +1,4 @@
-= if @conn.assigns[:author_or_admin] || @comment.approved do
+= if @conn.assigns[:admin] || @comment.approved do
   div id="comment-#{@comment.id}" class="media comment" data-comment-id="#{@comment.id}"
     div class="media-body"
       h4 class="media-heading"
@@ -7,7 +7,7 @@
           = @comment.author
         small< at #{format_date(@comment.inserted_at)}
 
-        = if @conn.assigns[:author_or_admin] do 
+        = if @conn.assigns[:admin] do 
           .pull-right
             small
               = unless @comment.approved do 

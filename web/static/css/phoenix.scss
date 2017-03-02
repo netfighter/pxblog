@@ -19,6 +19,15 @@ a.navbar-brand {
   background-size: 32%;
 }
 
+/* Panels */
+.panel-heading {
+  padding: 15px !important; 
+
+  h4 {
+    margin: 0px; 
+  }
+}
+
 /* Sticky footer */
 .footer {
   position: fixed;
@@ -78,7 +87,13 @@ a.navbar-brand {
   }
 }
 
-/* Phoenix delete buttom form styling fix */
+/* Form validation messages */
+
+.form-group .help-block {
+  color: #a94442;
+}
+
+/* Phoenix delete button form styling fix */
 .pull-right .btn-group form.link {
   float: right;
 
@@ -87,6 +102,15 @@ a.navbar-brand {
     border-bottom-left-radius: 0;
     border-left: none;
   }
+}
+
+div.account-links form.link, td.table-actions form.link {
+  display: inline-block;
+}
+
+/* Blog post */
+#posts-list img, #post-content img {
+  max-width: 100%;
 }
 
 /* Blog post comments */

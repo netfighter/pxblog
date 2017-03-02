@@ -1,0 +1,6 @@
+h2 Edit user
+
+= render "form.html", changeset: @changeset,
+                      action: user_path(@conn, :update, @user),
+                      roles: @roles,
+                      conn: @conn

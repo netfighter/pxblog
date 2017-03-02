@@ -4,7 +4,7 @@ input type="hidden" id="post-id" value="#{@post.id}"
   div class="col-lg-9 col-md-9 col-sm-9 col-xs-7"
     h2 
       = @post.title
-  = if @conn.assigns[:author_or_admin] do 
+  = if @conn.assigns[:admin] do 
     div class="col-lg-3 col-md-3 col-sm-3 col-xs-5"
       .pull-right
         div class="btn-toolbar" role="toolbar"
@@ -22,7 +22,7 @@ input type="hidden" id="post-id" value="#{@post.id}"
                 i class="glyphicon glyphicon-remove" 
                 | &nbsp;Delete
 
-div 
+div#post-content
   = markdown(@post.body)
 hr
 
@@ -31,4 +31,4 @@ hr
 div#comments class="comments"
   h3 Comments 
   = for comment <- @post.comments do 
-    = render Pxblog.CommentView, "comment.html", comment: comment, author_or_admin: @conn.assigns[:author_or_admin], conn: @conn, post: @post
+    = render Pxblog.CommentView, "comment.html", comment: comment, author_or_admin: @conn.assigns[:admin], conn: @conn, post: @post

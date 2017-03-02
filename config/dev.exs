@@ -41,3 +41,7 @@ config :pxblog, Pxblog.Repo,
   database: "pxblog_dev",
   hostname: "localhost",
   pool_size: 10
+
+# Config mailer
+config :pxblog, Pxblog.Mailer,
+  adapter: Swoosh.Adapters.Local
