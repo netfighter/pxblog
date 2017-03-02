@@ -1,0 +1,47 @@
+
+= form_for @changeset, account_path(@conn, :update, @user), fn f ->
+  = if @changeset.action do 
+    div class="alert alert-danger alert-dismissable"
+      a href="#" class="close" data-dismiss="alert" aria-label="close" &times;
+      p Oops, something went wrong! Please check the errors below.</p>
+  .panel.panel-default
+    .panel-heading
+      h4 Edit Account
+    .panel-body
+      .row
+        .form-group.col-md-5
+          = label f, :username, class: "control-label"
+          = text_input f, :username, class: "form-control"
+          = error_tag f, :username
+      .row
+        .form-group.col-md-5
+          = label f, :email, class: "control-label"
+          = text_input f, :email, class: "form-control"
+          = error_tag f, :email
+      .row
+        .form-group.col-md-5
+          = label f, :password, "Password", class: "control-label"
+          i< 
+           | (leave blank if you don't want to change it)
+          br
+          = password_input f, :password, class: "form-control"
+          = error_tag f, :password
+      .row
+        .form-group.col-md-5
+          = label f, :password_confirmation, "Password Confirmation", class: "control-label"
+          = password_input f, :password_confirmation, class: "form-control"
+          = error_tag f, :password_confirmation
+      .row
+        .form-group.col-md-5
+          = label f, :current_password, "Current Password", class: "control-label"
+          i< 
+           | (we need your current password to confirm your changes)
+          br
+          = password_input f, :current_password, class: "form-control"
+          = error_tag f, :current_password
+      .row
+        .form-group.col-md-5
+          = submit "Update Account", class: "btn btn-primary"
+div.account-links
+ | Unhappy? 
+ = link "Cancel my account", to: account_path(@conn, :delete, @user), method: :delete, data: [confirm: "Are you sure?"]

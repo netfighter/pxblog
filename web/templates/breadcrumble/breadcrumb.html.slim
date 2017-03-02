@@ -1,0 +1,10 @@
+= for breadcrumb_trail <- @breadcrumb_trails do 
+  ol class="breadcrumb"
+    - trail_length = Enum.count(breadcrumb_trail)
+    = for {breadcrumb, i} <- Enum.with_index(breadcrumb_trail) do 
+      li
+        = if breadcrumb[:url] do
+          a href="#{breadcrumb[:url]}"
+            span #{breadcrumb[:name]}
+        - else
+          span itemprop="name" #{breadcrumb[:name]}

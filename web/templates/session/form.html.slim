@@ -1,0 +1,25 @@
+.sign-in-form-container
+  .panel.panel-default
+    .panel-heading
+      h4 Sign in
+    .panel-body
+      = form_for @changeset, @action, [role: "form", class: "form form-horizontal"], fn f ->
+        = if f.errors != [] do
+          div class="alert alert-danger"
+            p Oops, something went wrong! Please check the errors below:
+              ul
+                = for {attr, message} <- f.errors do
+                 li 
+                   = humanize(attr) 
+                   = message
+
+        .form-group
+          .col-md-12
+            = text_input f, :email, class: "form-control", placeholder: "Email"
+            = password_input f, :password, class: "form-control", placeholder: "Password"
+        .form-group
+          .col-md-4 style="margin-top: 10px;"
+            = submit "Sign in", class: "btn btn-primary"
+  = link "Sign Up", to: account_path(@conn, :new)
+  br
+  = link "Forgot your password?", to: recover_password_path(@conn, :recover_password)

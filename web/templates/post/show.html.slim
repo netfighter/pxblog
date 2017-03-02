@@ -1,0 +1,34 @@
+input type="hidden" id="post-id" value="#{@post.id}"
+
+.row
+  div class="col-lg-9 col-md-9 col-sm-9 col-xs-7"
+    h2 
+      = @post.title
+  = if @conn.assigns[:admin] do 
+    div class="col-lg-3 col-md-3 col-sm-3 col-xs-5"
+      .pull-right
+        div class="btn-toolbar" role="toolbar"
+          div class="btn-group"
+            = link to: post_path(@conn, :index), class: "btn btn-default", aria: [label: "Left Align"] do
+              small
+                i class="glyphicon glyphicon-chevron-left" 
+                | &nbsp;Back
+            = link to: post_path(@conn, :edit, @post), class: "btn btn-default", aria: [label: "Center Align"] do
+              small
+                i class="glyphicon glyphicon-pencil" 
+                | &nbsp;Edit
+            = link to: post_path(@conn, :delete, @post), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-default .pull-right", aria: [label: "Justify"] do
+              small
+                i class="glyphicon glyphicon-remove" 
+                | &nbsp;Delete
+
+div#post-content
+  = markdown(@post.body)
+hr
+
+= render Pxblog.CommentView, "form.html", changeset: @comment_changeset, action: post_comment_path(@conn, :create, @post)
+
+div#comments class="comments"
+  h3 Comments 
+  = for comment <- @post.comments do 
+    = render Pxblog.CommentView, "comment.html", comment: comment, author_or_admin: @conn.assigns[:admin], conn: @conn, post: @post

@@ -1,0 +1,20 @@
+.well
+  h4 Leave a comment:
+
+  = form_for @changeset, @action, fn f ->
+    = if @changeset.action do
+      div.alert.alert-danger
+        p Oops, something went wrong! Please check the errors below.
+
+    div.form-group 
+      = label f, :author, class: "control-label"
+      = text_input f, :author, class: "form-control"
+      = error_tag f, :author
+
+    div.form-group 
+      = label f, :body, class: "control-label"
+      = textarea f, :body, class: "form-control"
+      = error_tag f, :body 
+
+    div.form-group 
+      = submit "Add comment", class: "btn btn-primary create-comment"

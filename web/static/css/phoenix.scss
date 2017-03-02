@@ -1,0 +1,121 @@
+//colors
+$color_log_cabin_approx: #222222;
+$color_cod_gray_approx: #080808;
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  padding-bottom: 60px;
+}
+
+/* Custom page header */
+a.navbar-brand {
+  padding-left: 50px;
+  background-image: url("/images/phoenix-logo.png");
+  background-repeat: no-repeat;
+  background-position: left center; 
+  background-size: 32%;
+}
+
+/* Panels */
+.panel-heading {
+  padding: 15px !important; 
+
+  h4 {
+    margin: 0px; 
+  }
+}
+
+/* Sticky footer */
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  background-color: $color_log_cabin_approx;
+  border-top: 1px solid $color_cod_gray_approx;
+  z-index: 2;
+
+  p {
+    margin-top: 20px;
+  }
+  p::before {
+    content: "\00a9 \00a0";
+  }
+}
+
+/* Sign In form */
+.sign-in-form-container {
+  max-width: 400px;
+  padding: 0;
+  margin: 0 auto;
+
+  .checkbox {
+    input {
+      margin-top: 1px;
+      font-weight: normal;
+    }
+  }
+
+  .form-group {
+    margin-top: 10px;
+  }
+
+  .form-control {
+    position: relative;
+    font-size: 16px;
+    height: auto;
+    padding: 10px;
+
+    &:focus {
+      z-index: 2;
+    }
+  }
+
+  input[type="text"] {
+    margin-bottom: -1px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+}
+
+/* Form validation messages */
+
+.form-group .help-block {
+  color: #a94442;
+}
+
+/* Phoenix delete button form styling fix */
+.pull-right .btn-group form.link {
+  float: right;
+
+  .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: none;
+  }
+}
+
+div.account-links form.link, td.table-actions form.link {
+  display: inline-block;
+}
+
+/* Blog post */
+#posts-list img, #post-content img {
+  max-width: 100%;
+}
+
+/* Blog post comments */
+.comments h3 {
+  border-bottom: 1px solid #EEEEEE;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}

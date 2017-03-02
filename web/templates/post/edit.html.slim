@@ -1,0 +1,2 @@
+h2 Edit post
+= render "form.html", changeset: @changeset, action: post_path(@conn, :update, @post), cancel: post_path(@conn, :show, @post)

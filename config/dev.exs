@@ -22,7 +22,7 @@ config :pxblog, Pxblog.Endpoint,
       ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
       ~r{priv/gettext/.*(po)$},
       ~r{web/views/.*(ex)$},
-      ~r{web/templates/.*(eex)$}
+      ~r{web/templates/.*(eex|slim|slime)$}
     ]
   ]
 
@@ -41,3 +41,7 @@ config :pxblog, Pxblog.Repo,
   database: "pxblog_dev",
   hostname: "localhost",
   pool_size: 10
+
+# Config mailer
+config :pxblog, Pxblog.Mailer,
+  adapter: Swoosh.Adapters.Local

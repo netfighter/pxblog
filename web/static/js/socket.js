@@ -1,7 +1,5 @@
 // Import the socket library
 import {Socket} from "phoenix"
-// And import jquery for DOM manipulation
-import $ from "jquery"
 
 // Grab the user's token from the meta tag
 const userToken = $("meta[name='channel_token']").attr("content")
@@ -26,21 +24,15 @@ channel.join()
 // Consider this a poor version of JSX
 const createComment = (payload) => `
   <div id="comment-${payload.commentId}" class="comment" data-comment-id="${payload.commentId}">
-    <div class="row">
-      <div class="col-xs-4">
+    <div class="media-body">
+      <h4 class="media-heading">
+        <small>by</small> 
         <strong class="comment-author">${payload.author}</strong>
-      </div>
-      <div class="col-xs-4">
-        <em>${payload.insertedAt}</em>
-      </div>
-      <div class="col-xs-4 text-right">
-        ${ userToken ? '<button class="btn btn-xs btn-primary approve">Approve</button> <button class="btn btn-xs btn-danger delete">Delete</button>' : '' }
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-xs-12 comment-body">
-        ${payload.body}
-      </div>
+        <small>at ${moment(payload.insertedAt).format("YYYY-MM-DD HH:mm")}</small>   
+        ${ userToken ? '<div class="pull-right"><small><button class="btn btn-xs btn-primary approve">Approve</button> <button class="btn btn-xs btn-danger delete">Delete</button></small></div>' : '' }      
+      </h4>
+      <div class="comment-body">${payload.body}</div>
+      <hr>
     </div>
   </div>
 `
@@ -77,8 +69,11 @@ $(".comments").on("click", ".approve", (event) => {
 // REQ 9: Push the DELETED_COMMENT event to the socket but only pass the comment id (that's all we need)
 $(".comments").on("click", ".delete", (event) => {
   event.preventDefault()
-  const commentId = getTargetCommentId(event.currentTarget)
-  channel.push(DELETED_COMMENT, { commentId, postId })
+
+  if (confirm("Are you sure?")) {
+    const commentId = getTargetCommentId(event.currentTarget)
+    channel.push(DELETED_COMMENT, { commentId, postId })
+  }
 })
 
 // REQ 10: Handle receiving the CREATED_COMMENT event
