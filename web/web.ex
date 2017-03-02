@@ -29,7 +29,7 @@ defmodule Pxblog.Web do
   def controller do
     quote do
       use Phoenix.Controller
-      use Breadcrumble #<= ADD
+      use Breadcrumble
 
       alias Pxblog.Repo
       import Ecto

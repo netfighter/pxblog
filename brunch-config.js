@@ -74,8 +74,7 @@ exports.config = {
 
   npm: {
     enabled: true,
-    //whitelist: ["phoenix", "phoenix_html", "jquery", "bootstrap-sass"], // pull jquery and bootstrap-sass in as front-end assets
-    globals: { // bootstrap-sass' JavaScript requires both '$' and 'jQuery' in global scope
+    globals: { 
       $: 'jquery',
       jQuery: 'jquery',
       bootstrap: 'bootstrap-sass', // require bootstrap-sass' JavaScript globally
