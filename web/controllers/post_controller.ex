@@ -83,7 +83,7 @@ defmodule Pxblog.PostController do
   
   defp find_post_with_comments(conn, _opts) do
     post = Repo.get!(Post, conn.params["id"])
-      |> Repo.preload(:comments)
+      |> Repo.preload(comments: [:user])
     assign(conn, :post, post)
   end
 

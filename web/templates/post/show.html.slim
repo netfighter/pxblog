@@ -25,10 +25,15 @@ input type="hidden" id="post-id" value="#{@post.id}"
 div#post-content
   = markdown(@post.body)
 hr
-
-= render Pxblog.CommentView, "form.html", changeset: @comment_changeset, action: post_comment_path(@conn, :create, @post)
+= if @conn.assigns[:user] do 
+  = render Pxblog.CommentView, "form.html", changeset: @comment_changeset, action: post_comment_path(@conn, :create, @post)
+- else
+  .alert.alert-info
+    | You need to
+    a<> href="#{session_path(@conn, :new)}" Sign in
+    | to be able to add comments.
 
 div#comments class="comments"
   h3 Comments 
   = for comment <- @post.comments do 
-    = render Pxblog.CommentView, "comment.html", comment: comment, author_or_admin: @conn.assigns[:admin], conn: @conn, post: @post
+    = render Pxblog.CommentView, "comment.html", comment: comment, admin: @conn.assigns[:admin], conn: @conn, post: @post

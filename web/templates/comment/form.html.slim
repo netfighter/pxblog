@@ -7,13 +7,7 @@
         p Oops, something went wrong! Please check the errors below.
 
     div.form-group 
-      = label f, :author, class: "control-label"
-      = text_input f, :author, class: "form-control"
-      = error_tag f, :author
-
-    div.form-group 
-      = label f, :body, class: "control-label"
-      = textarea f, :body, class: "form-control"
+      = textarea f, :body, class: "form-control", rows: 3
       = error_tag f, :body 
 
     div.form-group 

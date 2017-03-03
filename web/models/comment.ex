@@ -2,10 +2,9 @@ defmodule Pxblog.Comment do
   use Pxblog.Web, :model
 
   schema "comments" do
-    field :author, :string
     field :body, :string
-    field :approved, :boolean, default: false
     belongs_to :post, Pxblog.Post
+    belongs_to :user, Pxblog.User
 
     timestamps()
   end
@@ -15,7 +14,7 @@ defmodule Pxblog.Comment do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:author, :body, :approved])
-    |> validate_required([:author, :body, :approved])
+    |> cast(params, [:body, :post_id, :user_id])
+    |> validate_required([:body, :post_id, :user_id])
   end
 end

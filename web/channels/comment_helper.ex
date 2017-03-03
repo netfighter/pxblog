@@ -6,29 +6,28 @@ defmodule Pxblog.CommentHelper do
 
   import Ecto, only: [build_assoc: 2]
 
-  def create(%{"postId" => post_id, "body" => body, "author" => author}, _socket) do
-    post      = get_post(post_id)
+  def create(%{"postId" => post_id, "body" => body}, %{assigns: %{user: user_id}}) do
+    post = get_post(post_id)
+    user = get_user(user_id)
     changeset = post
       |> build_assoc(:comments)
-      |> Comment.changeset(%{body: body, author: author})
+      |> Comment.changeset(%{body: body, user_id: user.id})
 
-    Repo.insert(changeset)
+    case Repo.insert(changeset) do
+      {:ok, comment} ->
+        comment = comment |> Repo.preload([:user])
+        {:ok, Map.merge(%{}, %{id: comment.id, author: comment.user.username, author_id: comment.user_id, inserted_at: comment.inserted_at})}
+      {:error, changeset} ->
+        {:error, "User is not authorized"}
+    end
   end
 
-  def approve(%{"postId" => post_id, "commentId" => comment_id}, %{assigns: %{user: user_id}}) do
-    authorize_and_perform(post_id, user_id, fn ->
-      comment = Repo.get!(Comment, comment_id)
-      changeset = Comment.changeset(comment, %{approved: true})
-      Repo.update(changeset)
-    end)
-  end
-
-  def approve(_params, %{}), do: {:error, "User is not authorized"}
-  def approve(_params, nil), do: {:error, "User is not authorized"}
+  def create(_params, %{}), do: {:error, "User is not authorized"}
+  def create(_params, nil), do: {:error, "User is not authorized"}
 
   def delete(%{"postId" => post_id, "commentId" => comment_id}, %{assigns: %{user: user_id}}) do
-    authorize_and_perform(post_id, user_id, fn ->
-      comment = Repo.get!(Comment, comment_id)
+    authorize_and_perform(comment_id, user_id, fn ->
+      comment = get_comment(comment_id)
       Repo.delete(comment)
     end)
   end
@@ -36,10 +35,10 @@ defmodule Pxblog.CommentHelper do
   def delete(_params, %{}), do: {:error, "User is not authorized"}
   def delete(_params, nil), do: {:error, "User is not authorized"}
 
-  defp authorize_and_perform(post_id, user_id, action) do
-    post = get_post(post_id)
+  defp authorize_and_perform(comment_id, user_id, action) do
+    comment = get_comment(comment_id)
     user = get_user(user_id)
-    if is_authorized_user?(user, post) do
+    if is_authorized_user?(user, comment) do
       action.()
     else
       {:error, "User is not authorized"}
@@ -54,7 +53,11 @@ defmodule Pxblog.CommentHelper do
     Repo.get!(Post, post_id) |> Repo.preload([:user, :comments])
   end
 
-  defp is_authorized_user?(user, post) do
-    (user && (user.id == post.user_id || Pxblog.RoleChecker.is_admin?(user)))
+  defp get_comment(comment_id) do
+    Repo.get!(Comment, comment_id)
+  end
+
+  defp is_authorized_user?(user, comment) do
+    (user && (user.id == comment.user_id || Pxblog.RoleChecker.is_admin?(user)))
   end
 end

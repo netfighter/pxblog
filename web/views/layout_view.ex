@@ -1,7 +1,6 @@
 defmodule Pxblog.LayoutView do
   use Pxblog.Web, :view
+  import Pxblog.ViewHelpers
 
-  def current_user(conn) do
-    Plug.Conn.get_session(conn, :current_user)
-  end
+  require IEx
 end

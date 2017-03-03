@@ -9,30 +9,19 @@ defmodule Pxblog.CommentHelperTest do
   setup do
     user        = insert(:user)
     post        = insert(:post, user: user)
-    comment     = insert(:comment, post: post, approved: false)
+    comment     = insert(:comment, post: post, user: user)
     fake_socket = %{assigns: %{user: user.id}}
 
     {:ok, user: user, post: post, comment: comment, socket: fake_socket}
   end
 
-  test "creates a comment for a post", %{post: post} do
+  test "creates a comment for a post", %{post: post, user: user, socket: socket} do
     {:ok, comment} = CommentHelper.create(%{
       "postId" => post.id,
-      "author" => "Some Person",
       "body" => "Some Post"
-    }, %{})
+    }, socket)
     assert comment
     assert Repo.get(Comment, comment.id)
-  end
-
-  test "approves a comment when an authorized user", %{post: post, comment: comment, socket: socket} do
-    {:ok, comment} = CommentHelper.approve(%{"postId" => post.id, "commentId" => comment.id}, socket)
-    assert comment.approved
-  end
-
-  test "does not approve a comment when not an authorized user", %{post: post, comment: comment} do
-    {:error, message} = CommentHelper.approve(%{"postId" => post.id, "commentId" => comment.id}, %{})
-    assert message == "User is not authorized"
   end
 
   test "deletes a comment when an authorized user", %{post: post, comment: comment, socket: socket} do

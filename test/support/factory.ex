@@ -34,9 +34,8 @@ defmodule Pxblog.Factory do
 
   def comment_factory do
     %Comment{
-      author: "Test User",
+      user: build(:user),
       body: "This is a sample comment",
-      approved: false,
       post: build(:post)
     }
   end

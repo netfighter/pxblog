@@ -7,7 +7,7 @@ defmodule Pxblog.CommentChannelTest do
   setup do
     user    = insert(:user)
     post    = insert(:post, user: user)
-    comment = insert(:comment, post: post, approved: false)
+    comment = insert(:comment, post: post, user: user)
 
     {:ok, _, socket} =
       socket("user_id", %{user: user.id})
@@ -30,12 +30,6 @@ defmodule Pxblog.CommentChannelTest do
     push socket, "CREATED_COMMENT", %{"body" => "Test Post", "author" => "Test Author", "postId" => post.id}
     expected = %{"body" => "Test Post", "author" => "Test Author"}
     assert_broadcast "CREATED_COMMENT", expected
-  end
-
-  test "APPROVED_COMMENT broadcasts to comments:*", %{socket: socket, post: post, comment: comment} do
-    push socket, "APPROVED_COMMENT", %{"commentId" => comment.id, "postId" => post.id, approved: false}
-    expected = %{"commentId" => comment.id, "postId" => post.id, approved: true}
-    assert_broadcast "APPROVED_COMMENT", expected
   end
 
   test "DELETED_COMMENT broadcasts to comments:*", %{socket: socket, post: post, comment: comment} do
