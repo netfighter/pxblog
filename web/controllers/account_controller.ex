@@ -8,6 +8,7 @@ defmodule Pxblog.AccountController do
   import Comeonin.Bcrypt, only: [checkpw: 2, hashpwsalt: 1]
 
   plug :authorize_user when action in [:edit, :update, :delete]
+  plug :check_current_password when action in [:update]
   plug :redirect_if_signed_in when action in [:new, :create]
   plug :validate_reset_password_token when action in[:reset_password]
   plug :add_breadcrumb, name: 'Home', url: '/'
@@ -41,13 +42,11 @@ defmodule Pxblog.AccountController do
 
   def update(conn, %{"id" => id, "user" => user_params}) do
     user = Repo.get!(User, id)
-    check_password(user, user_params["current_password"], conn)
-    
     if is_nil(user_params["password"]) || user_params["password"] == "" do
       changeset = User.changeset(user, user_params)
     else
       changeset = User.changeset_with_password(user, user_params)
-    end  
+    end
 
     case Repo.update(changeset) do
       {:ok, user} ->
@@ -123,10 +122,23 @@ defmodule Pxblog.AccountController do
 
   defp authorize_user(conn, _) do
     user = get_session(conn, :current_user)
-    if user && (Integer.to_string(user.id) == conn.params["id"] || Pxblog.RoleChecker.is_admin?(user)) do
+    if user && (Integer.to_string(user.id) == conn.params["id"]) do
       conn
     else
       send_home_with_error(conn, "You are not authorized to modify that user!")
+    end
+  end
+
+   defp check_current_password(conn, _) do
+     user = Repo.get!(User, get_session(conn, :current_user).id)
+     password = conn.params["user"]["current_password"]
+    if checkpw(password, user.encrypted_password) do
+      conn
+    else 
+      conn
+      |> put_flash(:error, "Invalid current password!")
+      |> redirect(to: account_path(conn, :edit, user))
+      |> halt()
     end
   end
 
@@ -142,15 +154,6 @@ defmodule Pxblog.AccountController do
   defp set_default_role(params) do
     default_role = Repo.one(from r in Pxblog.Role, where: [admin: false], order_by: [asc: r.id], limit: 1)
     Map.merge(params, %{"role_id" => default_role.id})
-  end
-
-  defp check_password(user, password, conn) do
-    if !checkpw(password, user.encrypted_password) do
-      conn
-      |> put_flash(:error, "Invalid current password!")
-      |> redirect(to: account_path(conn, :edit, user))
-      |> halt()
-    end
   end
 
   defp create_reset_password_token(user) do

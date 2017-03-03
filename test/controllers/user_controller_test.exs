@@ -16,7 +16,7 @@ defmodule Pxblog.UserControllerTest do
     admin_user = insert(:user, role: admin_role)
 
     {:ok, conn: build_conn(), admin_role: admin_role, user_role: user_role, nonadmin_user: nonadmin_user, admin_user: admin_user}
-end
+  end
 
   defp valid_create_attrs(role) do
     Map.put(@valid_create_attrs, :role_id, role.id)
