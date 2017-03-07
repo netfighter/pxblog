@@ -30,7 +30,7 @@ const createComment = (payload) => `
         <small>by</small> 
         <strong class="comment-author">${payload.author}</strong>
         <small>at ${moment(payload.insertedAt).format("YYYY-MM-DD HH:mm")}</small>   
-        ${ userToken && (adminUser || currentUser == payload.authorId) ? '<div class="pull-right"><small><button class="btn btn-xs btn-danger delete">Delete</button></small></div>' : '' }      
+        ${ userToken && (adminUser || currentUser == payload.authorId) ? '<div class="pull-right"><small><a href="#" class="delete"><i class="glyphicon glyphicon-remove"></i> Delete</a></small></div>' : '' }      
       </h4>
       <div class="comment-body">${payload.body}</div>
       <hr>

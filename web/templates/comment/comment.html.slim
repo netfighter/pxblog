@@ -6,7 +6,7 @@ div id="comment-#{@comment.id}" class="media comment" data-comment-id="#{@commen
         = @comment.user.username
       small< at #{format_date(@comment.inserted_at)}
 
-      = if allowed_to_delete_comment?(@conn, @comment) do 
+      = if @conn.assigns[:current_user] |> can?(:delete, @comment) do 
         .pull-right
           small
             a< href="#" class="delete" 

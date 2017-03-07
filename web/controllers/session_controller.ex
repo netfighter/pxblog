@@ -22,7 +22,8 @@ defmodule Pxblog.SessionController do
 
   def delete(conn, _params) do
     conn
-    |> delete_session(:current_user)
+    |> Plug.Conn.delete_session(:current_user)
+    |> Plug.Conn.assign(:current_user, nil)
     |> put_flash(:info, "Signed out successfully!")
     |> redirect(to: post_path(conn, :index))
   end
@@ -34,7 +35,8 @@ defmodule Pxblog.SessionController do
   defp sign_in(user, password, conn) do
     if checkpw(password, user.encrypted_password) do
       conn
-      |> put_session(:current_user, %{id: user.id, username: user.username, role_id: user.role.id, admin: user.role.admin})
+      |> Plug.Conn.put_session(:current_user, %{id: user.id, username: user.username, role_id: user.role.id, admin: user.role.admin})
+      |> Plug.Conn.assign(:current_user, user)
       |> put_flash(:info, "Sign in successful!")
       |> redirect(to: post_path(conn, :index))
     else
@@ -45,7 +47,8 @@ defmodule Pxblog.SessionController do
   defp failed_login(conn) do
     dummy_checkpw()
     conn
-    |> put_session(:current_user, nil)
+    |> Plug.Conn.put_session(:current_user, nil)
+    |> Plug.Conn.assign(:current_user, nil)
     |> put_flash(:error, "Invalid email/password combination!")
     |> redirect(to: post_path(conn, :index))
     |> halt()

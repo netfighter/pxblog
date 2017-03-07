@@ -37,7 +37,7 @@ defmodule Pxblog.PostControllerTest do
 
   test "does not render form for new resources when logged in as user", %{conn: conn} do
     conn = get conn, post_path(conn, :new)
-    assert get_flash(conn, :error) == "You are not authorized to create/edit posts!"
+    assert get_flash(conn, :error) == "You are not authorized to access this resource!"
     assert redirected_to(conn) == post_path(conn, :index)
     assert conn.halted
   end
@@ -55,7 +55,7 @@ defmodule Pxblog.PostControllerTest do
 
   test "does not create resource and renders errors when logged in as user", %{conn: conn} do
     conn = post conn, post_path(conn, :create), post: @valid_attrs
-    assert get_flash(conn, :error) == "You are not authorized to create/edit posts!"
+    assert get_flash(conn, :error) == "You are not authorized to access this resource!"
     assert redirected_to(conn) == post_path(conn, :index)
     assert conn.halted
   end
@@ -67,14 +67,15 @@ defmodule Pxblog.PostControllerTest do
   end
   
   test "renders page not found when id is nonexistent", %{conn: conn} do
-    assert_error_sent 404, fn ->
-      get conn, post_path(conn, :show, -1)
-    end
+    conn = get conn, post_path(conn, :show, -1)
+    assert get_flash(conn, :error) == "Resource not found!"
+    assert redirected_to(conn) == post_path(conn, :index)
+    assert conn.halted
   end
   
   test "forbids editing blog post as user", %{conn: conn, post: post} do
     conn = get conn, post_path(conn, :edit, post)
-    assert get_flash(conn, :error) == "You are not authorized to create/edit posts!"
+    assert get_flash(conn, :error) == "You are not authorized to access this resource!"
     assert redirected_to(conn) == post_path(conn, :index)
     assert conn.halted
   end

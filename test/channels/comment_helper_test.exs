@@ -15,7 +15,7 @@ defmodule Pxblog.CommentHelperTest do
     {:ok, user: user, post: post, comment: comment, socket: fake_socket}
   end
 
-  test "creates a comment for a post", %{post: post, user: user, socket: socket} do
+  test "creates a comment for a post", %{post: post, socket: socket} do
     {:ok, comment} = CommentHelper.create(%{
       "postId" => post.id,
       "body" => "Some Post"

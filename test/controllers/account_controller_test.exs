@@ -43,7 +43,7 @@ defmodule Pxblog.AccountControllerTest do
   end
 
   test "creates resource and picks a default non admin role", %{conn: conn} do
-    conn = post conn, account_path(conn, :create), user: @valid_create_attrs
+    post conn, account_path(conn, :create), user: @valid_create_attrs
     user = Repo.get_by(User, @valid_attrs) |> Repo.preload([:role])
     assert user
     refute user.role.admin

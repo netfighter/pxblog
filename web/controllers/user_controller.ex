@@ -3,7 +3,7 @@ defmodule Pxblog.UserController do
   alias Pxblog.User
   alias Pxblog.Role
 
-  plug :authorize_admin 
+  plug :load_and_authorize_resource, model: User
   plug :add_breadcrumb, name: 'Home', url: '/'
   plug :add_breadcrumb, name: 'Users', url: '/users'
 
@@ -73,17 +73,5 @@ defmodule Pxblog.UserController do
     conn
     |> put_flash(:info, "User deleted successfully.")
     |> redirect(to: user_path(conn, :index))
-  end
-
-  defp authorize_admin(conn, _) do
-    user = get_session(conn, :current_user)
-    if user && Pxblog.RoleChecker.is_admin?(user) do
-      conn
-    else
-      conn
-      |> put_flash(:error, "You are not authorized to edit users!")
-      |> redirect(to: post_path(conn, :index))
-      |> halt()
-    end
   end
 end
