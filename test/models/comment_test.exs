@@ -4,11 +4,13 @@ defmodule Pxblog.CommentTest do
   alias Pxblog.Comment
   import Pxblog.Factory
 
-  @valid_attrs %{approved: true, author: "some content", body: "some content"}
+  @valid_attrs %{approved: true, body: "some content"}
   @invalid_attrs %{}
 
   test "changeset with valid attributes" do
-    changeset = Comment.changeset(%Comment{}, @valid_attrs)
+    user = insert(:user)
+    post = insert(:post)
+    changeset = Comment.changeset(%Comment{}, Map.merge(@valid_attrs, %{user_id: user.id, post_id: post.id}))
     assert changeset.valid?
   end
 
@@ -17,8 +19,9 @@ defmodule Pxblog.CommentTest do
     refute changeset.valid?
   end
 
-  test "creates a comment associated with a post" do
+  test "creates a comment associated with a post and an user" do
     comment = insert(:comment)
     assert comment.post_id
+    assert comment.user_id
   end
 end

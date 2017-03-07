@@ -26,6 +26,10 @@ config :phoenix, :template_engines,
   slim: PhoenixSlime.Engine,
   slime: PhoenixSlime.Engine
 
+config :canary, repo: Pxblog.Repo
+config :canary, unauthorized_handler: {Pxblog.Helpers.AuthorizationHelpers, :handle_unauthorized}
+config :canary, not_found_handler: {Pxblog.Helpers.AuthorizationHelpers, :handle_not_found}
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"

@@ -37,6 +37,10 @@ defmodule Pxblog.Web do
 
       import Pxblog.Router.Helpers
       import Pxblog.Gettext
+
+      import Canary.Plugs
+      import Pxblog.Helpers.AuthorizationHelpers
+      import Canada.Can, only: [can?: 3]
     end
   end
 
@@ -53,6 +57,11 @@ defmodule Pxblog.Web do
       import Pxblog.Router.Helpers
       import Pxblog.ErrorHelpers
       import Pxblog.Gettext
+
+      import Pxblog.Helpers.ViewHelpers
+      import Pxblog.Helpers.AuthorizationHelpers
+      import Canary.Plugs
+      import Canada.Can, only: [can?: 3]
     end
   end
 
@@ -70,6 +79,7 @@ defmodule Pxblog.Web do
       import Ecto
       import Ecto.Query
       import Pxblog.Gettext
+      import Canada.Can, only: [can?: 3]
     end
   end
 

@@ -21,24 +21,7 @@ defmodule Pxblog.CommentChannel do
   def handle_in("CREATED_COMMENT", payload, socket) do
     case CommentHelper.create(payload, socket) do
       {:ok, comment} ->
-        broadcast socket, "CREATED_COMMENT", Map.merge(payload, %{insertedAt: comment.inserted_at, commentId: comment.id, approved: comment.approved})
-        {:noreply, socket}
-      {:error, _} ->
-        {:noreply, socket}
-    end
-  end
-
-  def handle_in("APPROVED_COMMENT", payload, socket) do
-    case CommentHelper.approve(payload, socket) do
-      {:ok, comment} ->
-        #broadcast socket, "APPROVED_COMMENT", Map.merge(payload, %{insertedAt: comment.inserted_at, commentId: comment.id})
-        new_payload = payload
-          |> Map.merge(%{
-            insertedAt: comment.inserted_at,
-            commentId: comment.id,
-            approved: comment.approved
-          })
-        broadcast socket, "APPROVED_COMMENT", new_payload
+        broadcast socket, "CREATED_COMMENT", Map.merge(payload, %{insertedAt: comment.inserted_at, commentId: comment.id, author: comment.author, authorId: comment.author_id})
         {:noreply, socket}
       {:error, _} ->
         {:noreply, socket}

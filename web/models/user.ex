@@ -5,6 +5,7 @@ defmodule Pxblog.User do
 
   schema "users" do
     has_many :posts, Pxblog.Post
+    has_many :comments, Pxblog.Comment
     belongs_to :role, Pxblog.Role
     
     field :username, :string

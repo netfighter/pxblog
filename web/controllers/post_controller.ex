@@ -1,15 +1,15 @@
 defmodule Pxblog.PostController do
   use Pxblog.Web, :controller
-
   alias Pxblog.Post
-  alias Pxblog.Role
-  alias Pxblog.User
-
-  plug :assign_user
-  plug :authorize_user when action in [:new, :create, :edit, :update, :delete]
-  plug :set_authorization_flag
-  plug :find_post_with_comments when action in [:show]
-  plug :find_post when action in [:edit, :update, :delete]
+  #alias Pxblog.Role
+  #alias Pxblog.User
+  
+  plug :load_and_authorize_resource, model: Post, except: [:show]
+  plug :load_and_authorize_resource, model: Post,
+       id_name: "id",
+       persisted: true,
+       preload: [comments: [:user]],
+       only: [:show]
   plug :add_breadcrumb, name: 'Home', url: '/'
 
   def index(conn, _params) do
@@ -20,7 +20,7 @@ defmodule Pxblog.PostController do
   def new(conn, _params) do
     conn = add_breadcrumb(conn, name: 'New Post', url: post_path(conn, :new))
     changeset =
-      conn.assigns[:user]
+      conn.assigns[:current_user]
       |> build_assoc(:posts)
       |> Post.changeset()
     render(conn, "new.html", changeset: changeset)
@@ -28,7 +28,7 @@ defmodule Pxblog.PostController do
 
   def create(conn, %{"post" => post_params}) do
     changeset =
-      conn.assigns[:user]
+      conn.assigns[:current_user]
       |> build_assoc(:posts)
       |> Post.changeset(post_params)
     case Repo.insert(changeset) do
@@ -74,50 +74,5 @@ defmodule Pxblog.PostController do
     conn
     |> put_flash(:info, "Post deleted successfully.")
     |> redirect(to: post_path(conn, :index))
-  end
-
-  defp find_post(conn, _opts) do
-    post = Repo.get!(Post, conn.params["id"])
-    assign(conn, :post, post)
-  end
-  
-  defp find_post_with_comments(conn, _opts) do
-    post = Repo.get!(Post, conn.params["id"])
-      |> Repo.preload(:comments)
-    assign(conn, :post, post)
-  end
-
-  defp assign_user(conn, _opts) do
-    if current_user(conn) do
-      user = Repo.get(User, current_user(conn).id)
-      conn
-      |> assign(:user, user)
-    else
-      conn
-    end
-  end
-
-  defp authorize_user(conn, _opts) do
-    if is_authorized_user?(conn) do
-      conn
-    else
-      conn
-      |> put_flash(:error, "You are not authorized to create/edit posts!")
-      |> redirect(to: post_path(conn, :index))
-      |> halt
-    end
-  end
-
-  defp is_authorized_user?(conn) do
-    user = current_user(conn)
-    (user && Pxblog.RoleChecker.is_admin?(current_user(conn)))
-  end
-
-  defp set_authorization_flag(conn, _opts) do
-    assign(conn, :admin, is_authorized_user?(conn))
-  end
-
-  defp current_user(conn) do
-    get_session(conn, :current_user)
   end
 end

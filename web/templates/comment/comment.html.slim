@@ -1,19 +1,18 @@
-= if @conn.assigns[:admin] || @comment.approved do
-  div id="comment-#{@comment.id}" class="media comment" data-comment-id="#{@comment.id}"
-    div class="media-body"
-      h4 class="media-heading"
-        small> by
-        strong class="comment-author"
-          = @comment.author
-        small< at #{format_date(@comment.inserted_at)}
+div id="comment-#{@comment.id}" class="media comment" data-comment-id="#{@comment.id}"
+  div class="media-body"
+    h4 class="media-heading"
+      small> by
+      strong class="comment-author"
+        = @comment.user.username
+      small< at #{format_date(@comment.inserted_at)}
 
-        = if @conn.assigns[:admin] do 
-          .pull-right
-            small
-              = unless @comment.approved do 
-                button class="btn btn-xs btn-primary approve" Approve
-              button< class="btn btn-xs btn-danger delete" Delete
+      = if @conn.assigns[:current_user] |> can?(:delete, @comment) do 
+        .pull-right
+          small
+            a< href="#" class="delete" 
+              i> class="glyphicon glyphicon-remove"
+              | Delete
 
-      div class="comment-body"
-        = @comment.body
-      hr
+    div class="comment-body"
+      = @comment.body
+    hr

@@ -16,7 +16,7 @@ defmodule Pxblog.UserControllerTest do
     admin_user = insert(:user, role: admin_role)
 
     {:ok, conn: build_conn(), admin_role: admin_role, user_role: user_role, nonadmin_user: nonadmin_user, admin_user: admin_user}
-end
+  end
 
   defp valid_create_attrs(role) do
     Map.put(@valid_create_attrs, :role_id, role.id)
@@ -43,7 +43,7 @@ end
   test "redirects from new form when not admin", %{conn: conn, nonadmin_user: nonadmin_user} do
     conn = login_user(conn, nonadmin_user)
     conn = get conn, user_path(conn, :new)
-    assert get_flash(conn, :error) == "You are not authorized to edit users!"
+    assert get_flash(conn, :error) == "You are not authorized to access this resource!"
     assert redirected_to(conn) == post_path(conn, :index)
     assert conn.halted
   end
@@ -60,7 +60,7 @@ end
   test "redirects from creating user when not admin", %{conn: conn, user_role: user_role, nonadmin_user: nonadmin_user} do
     conn = login_user(conn, nonadmin_user)
     conn = post conn, user_path(conn, :create), user: valid_create_attrs(user_role)
-    assert get_flash(conn, :error) == "You are not authorized to edit users!"
+    assert get_flash(conn, :error) == "You are not authorized to access this resource!"
     assert redirected_to(conn) == post_path(conn, :index)
     assert conn.halted
   end
@@ -83,7 +83,7 @@ end
   test "redirects away from editing when logged in as a different user", %{conn: conn, nonadmin_user: nonadmin_user, admin_user: admin_user} do
     conn = login_user(conn, nonadmin_user)
     conn = get conn, user_path(conn, :edit, admin_user)
-    assert get_flash(conn, :error) == "You are not authorized to edit users!"
+    assert get_flash(conn, :error) == "You are not authorized to access this resource!"
     assert redirected_to(conn) == post_path(conn, :index)
     assert conn.halted
   end
@@ -100,7 +100,7 @@ end
   test "does not update chosen resource when logged in as different user", %{conn: conn, nonadmin_user: nonadmin_user, admin_user: admin_user} do
     conn = login_user(conn, nonadmin_user)
     conn = put conn, user_path(conn, :update, admin_user), user: @valid_create_attrs
-    assert get_flash(conn, :error) == "You are not authorized to edit users!"
+    assert get_flash(conn, :error) == "You are not authorized to access this resource!"
     assert redirected_to(conn) == post_path(conn, :index)
     assert conn.halted
   end
@@ -119,7 +119,7 @@ end
     conn =
       login_user(conn, user)
       |> delete(user_path(conn, :delete, user))
-    assert get_flash(conn, :error) == "You are not authorized to edit users!"
+    assert get_flash(conn, :error) == "You are not authorized to access this resource!"
     assert redirected_to(conn) == post_path(conn, :index)
   end
 
@@ -139,7 +139,7 @@ end
     conn =
       login_user(conn, nonadmin_user)
       |> delete(user_path(conn, :delete, user))
-    assert get_flash(conn, :error) == "You are not authorized to edit users!"
+    assert get_flash(conn, :error) == "You are not authorized to access this resource!"
     assert redirected_to(conn) == post_path(conn, :index)
     assert conn.halted
   end
