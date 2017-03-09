@@ -1,8 +1,6 @@
 defmodule Pxblog.PostController do
   use Pxblog.Web, :controller
   alias Pxblog.Post
-  #alias Pxblog.Role
-  #alias Pxblog.User
   
   plug :load_and_authorize_resource, model: Post, except: [:show]
   plug :load_and_authorize_resource, model: Post,

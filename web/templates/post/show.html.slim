@@ -36,5 +36,5 @@ hr
 
 div#comments class="comments"
   h3 Comments 
-  = for comment <- @post.comments do 
+  = for comment <- Enum.reverse(@post.comments) do 
     = render Pxblog.CommentView, "comment.html", comment: comment, conn: @conn, post: @post
