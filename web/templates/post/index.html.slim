@@ -1,8 +1,6 @@
 div id="posts"
   .row
-    .col-lg-10
-      h1 Posts
-    .col-lg-2
+    .col-lg-12
       .pull-right
         = if @conn.assigns[:current_user] |> can?(:new, Pxblog.Post) do 
           a href="#{post_path(@conn, :new)}" class="btn btn-default" aria-label="Center Align"

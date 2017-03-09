@@ -25,9 +25,10 @@ defmodule Pxblog.PostControllerTest do
     delete conn, session_path(conn, :delete, user)
   end
   
-  test "lists all entries on index", %{conn: conn} do
+  test "lists all entries on index", %{conn: conn, post: post} do
     conn = get conn, post_path(conn, :index)
-    assert html_response(conn, 200) =~ "Posts"
+
+    assert html_response(conn, 200) =~ post.title
   end
   
   test "renders form for new resources when logged in as admin", %{conn: conn, admin: admin} do

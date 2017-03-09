@@ -23,7 +23,9 @@ defmodule Pxblog.AccountController do
     changeset = User.changeset_with_password(%User{}, user_params |> set_default_role)
 
     case Repo.insert(changeset) do
-      {:ok, _user} ->
+      {:ok, user} ->
+        send_welcome_email(conn, user)
+
         conn
         |> put_flash(:info, "User created successfully.")
         |> redirect(to: session_path(conn, :new))
@@ -68,9 +70,7 @@ defmodule Pxblog.AccountController do
   def recover_password(%{method: "POST"} = conn, %{"user" => user_params}) do
     if user = Repo.get_by(User, email: user_params["email"]) do
       reset_token = create_reset_password_token(user)
-      reset_path = reset_password_path(conn, :reset_password)
-      reset_password_url = "#{conn.scheme}://#{conn.host}:#{conn.port}#{reset_path}?token=#{reset_token}"
-      UserEmail.send_reset_password_email(user, reset_password_url) |> Mailer.deliver
+      send_reset_password_email(conn, user, reset_token)
 
       conn
       |> put_flash(:info, "You will receive an email with instructions on how to reset your password in a few minutes.")
@@ -183,5 +183,22 @@ defmodule Pxblog.AccountController do
     |> put_flash(:error, message)
     |> redirect(to: post_path(conn, :index))
     |> halt()
+  end
+
+  defp send_welcome_email(conn, user) do
+    sign_in_url = "#{conn.scheme}://#{conn.host}:#{conn.port}#{session_path(conn, :new)}"
+    # put mail sending job in a background task
+    Task.Supervisor.start_child Pxblog.MailerTask, fn ->
+      UserEmail.send_welcome_email(user, sign_in_url) |> Mailer.deliver
+    end
+  end
+
+  defp send_reset_password_email(conn, user, token) do
+    reset_path = reset_password_path(conn, :reset_password)
+    reset_password_url = "#{conn.scheme}://#{conn.host}:#{conn.port}#{reset_path}?token=#{token}"
+    # put mail sending job in a background task
+    Task.Supervisor.start_child Pxblog.MailerTask, fn ->
+      UserEmail.send_reset_password_email(user, reset_password_url) |> Mailer.deliver
+    end
   end
 end
