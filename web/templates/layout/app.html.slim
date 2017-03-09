@@ -6,10 +6,10 @@ html lang="en"
     meta content="width=device-width, initial-scale=1" name="viewport"
     meta content="" name="description"
     meta content="" name="author"
-    = if user = current_user(@conn) do 
+    = if user = @conn.assigns[:current_user] do 
       = tag :meta, name: "channel_token", content: Phoenix.Token.sign(@conn, "user", user.id)
       = tag :meta, name: "current_user", content: user.id
-      = tag :meta, name: "admin_user", content: "#{user.admin}"
+      = tag :meta, name: "admin_user", content: "#{user.role.admin}"
 
     title Phoenix Tiny Blog
     link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"
@@ -28,7 +28,7 @@ html lang="en"
         div id="navbar" class="navbar-collapse collapse"
           ul class="nav navbar-nav navbar-right"
             li class="dropdown"
-              = if user = current_user(@conn) do
+              = if user do
                 a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"
                   i> class="glyphicon glyphicon-user"
                   = user.username
@@ -38,7 +38,7 @@ html lang="en"
                     = link to: account_path(@conn, :edit, user.id) do
                       i> class="glyphicon glyphicon-edit"
                       | Edit account
-                  = if user.admin do
+                  = if user |> can?(:create, Pxblog.User) do
                     li
                       = link to: user_path(@conn, :index) do
                         i> class="glyphicon glyphicon-cog"
