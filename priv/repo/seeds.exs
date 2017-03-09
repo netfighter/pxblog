@@ -18,7 +18,7 @@ find_or_create_user = fn username, email, role ->
   case Repo.all(from u in User, where: u.username == ^username and u.email == ^email) do
     [] ->
       %User{}
-      |> User.changeset(%{username: username, email: email, password: "test", password_confirmation: "test", role_id: role.id})
+      |> User.changeset(%{username: username, email: email, password: "test1234", password_confirmation: "test1234", role_id: role.id})
       |> Repo.insert!()
     _ ->
       IO.puts "User: #{username} already exists, skipping"

@@ -50,7 +50,7 @@ defmodule Pxblog.SessionController do
     |> Plug.Conn.put_session(:current_user, nil)
     |> Plug.Conn.assign(:current_user, nil)
     |> put_flash(:error, "Invalid email/password combination!")
-    |> redirect(to: post_path(conn, :index))
+    |> redirect(to: session_path(conn, :new))
     |> halt()
   end
 end
