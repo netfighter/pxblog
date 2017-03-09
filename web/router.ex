@@ -31,13 +31,13 @@ defmodule Pxblog.Router do
     resources "/sessions", SessionController, only: [:new, :create, :delete]
   end
 
-  if Mix.env == :dev do
-    scope "/dev" do
-      pipe_through [:browser]
+  #if Mix.env == :dev do
+  scope "/dev" do
+    pipe_through [:browser]
 
-      forward "/mailbox", Plug.Swoosh.MailboxPreview, [base_path: "/dev/mailbox"]
-    end
+    forward "/mailbox", Plug.Swoosh.MailboxPreview, [base_path: "/dev/mailbox"]
   end
+  #end
 
   # Other scopes may use custom stacks.
   # scope "/api", Pxblog do
