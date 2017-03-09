@@ -22,6 +22,10 @@ config :logger, level: :info
 # Config ComeOnIn
 config :comeonin, bcrypt_log_rounds: 14
 
+# Config mailer
+config :pxblog, Pxblog.Mailer,
+  adapter: Swoosh.Adapters.Local
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key
