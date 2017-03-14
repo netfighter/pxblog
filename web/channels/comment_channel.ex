@@ -1,6 +1,7 @@
 defmodule Pxblog.CommentChannel do
   use Pxblog.Web, :channel
   alias Pxblog.CommentHelper
+  import Canada.Can, only: [can?: 3]
 
   def join("comments:" <> _comment_id, payload, socket) do
     if authorized?(payload) do
@@ -21,11 +22,24 @@ defmodule Pxblog.CommentChannel do
   def handle_in("CREATED_COMMENT", payload, socket) do
     case CommentHelper.create(payload, socket) do
       {:ok, comment} ->
-        broadcast socket, "CREATED_COMMENT", Map.merge(payload, %{insertedAt: comment.inserted_at, commentId: comment.id, author: comment.author, authorId: comment.author_id})
+        broadcast socket, "CREATED_COMMENT", Map.merge(payload, %{commentId: comment.id, insertedAt: comment.inserted_at, authorId: comment.author_id, author: comment.author})
         {:noreply, socket}
       {:error, _} ->
         {:noreply, socket}
     end
+  end
+
+  # Intercept CREATED_COMMENT and check delete permission for every receiver
+  intercept ["CREATED_COMMENT"]
+  def handle_out("CREATED_COMMENT", payload, socket) do
+    user_id = if is_nil(socket.assigns[:user]), do: 0, else: socket.assigns[:user]
+    user = Pxblog.Repo.one from u in Pxblog.User, where: u.id == ^user_id, preload: [:role]
+    if user do
+      push socket, "CREATED_COMMENT", Map.merge(payload, %{allowedToDelete: user |> can?(:delete, %Pxblog.Comment{id: payload.commentId, user_id: payload.authorId}) })
+    else
+      push socket, "CREATED_COMMENT", payload
+    end
+    {:noreply, socket}
   end
 
   def handle_in("DELETED_COMMENT", payload, socket) do

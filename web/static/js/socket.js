@@ -3,8 +3,6 @@ import {Socket} from "phoenix"
 
 // Grab the user's token and id from the meta tags
 const userToken = $("meta[name='channel_token']").attr("content")
-const currentUser = $("meta[name='current_user']").attr("content")
-const adminUser = $("meta[name='admin_user']").attr("content") == "true"
 // And make sure we're connecting with the user's token to persist the user id to the session
 const socket = new Socket("/socket", {params: {token: userToken}})
 // And connect out
@@ -30,7 +28,7 @@ const createComment = (payload) => `
         <small>by</small> 
         <strong class="comment-author">${payload.author}</strong>
         <small>at ${moment(payload.insertedAt).format("YYYY-MM-DD HH:mm")}</small>   
-        ${ userToken && (adminUser || currentUser == payload.authorId) ? '<div class="pull-right"><small><a href="#" class="delete"><i class="glyphicon glyphicon-remove"></i> Delete</a></small></div>' : '' }      
+        ${ payload.allowedToDelete ? '<div class="pull-right"><small><a href="#" class="delete"><i class="glyphicon glyphicon-remove"></i> Delete</a></small></div>' : '' }      
       </h4>
       <div class="comment-body">${payload.body}</div>
       <hr>
