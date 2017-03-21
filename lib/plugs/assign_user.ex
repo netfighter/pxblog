@@ -10,7 +10,7 @@ defmodule Pxblog.Plugs.AssignUser do
   def call(conn, _) do
     user = case get_session(conn, :current_user) do
       %{id: user_id} -> 
-        Repo.get!(User, user_id) |> Repo.preload(:role)
+        Repo.one from u in User, where: u.id == ^user_id, preload: [:role]
       _ -> 
         nil
     end

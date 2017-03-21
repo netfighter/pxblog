@@ -8,8 +8,6 @@ html lang="en"
     meta content="" name="author"
     = if user = @conn.assigns[:current_user] do 
       = tag :meta, name: "channel_token", content: Phoenix.Token.sign(@conn, "user", user.id)
-      = tag :meta, name: "current_user", content: user.id
-      = tag :meta, name: "admin_user", content: "#{user.role.admin}"
 
     title Phoenix Tiny Blog
     link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"

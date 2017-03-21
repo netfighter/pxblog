@@ -9,7 +9,7 @@ defmodule Pxblog.AccountController do
 
   plug :authorize_user when action in [:edit, :update, :delete]
   plug :check_current_password when action in [:update]
-  plug :redirect_if_signed_in when action in [:new, :create]
+  plug :redirect_if_signed_in when action in [:new, :create, :recover_password, :reset_password]
   plug :validate_reset_password_token when action in[:reset_password]
   plug :add_breadcrumb, name: 'Home', url: '/'
 
@@ -69,7 +69,7 @@ defmodule Pxblog.AccountController do
 
   def recover_password(%{method: "POST"} = conn, %{"user" => user_params}) do
     if user = Repo.get_by(User, email: user_params["email"]) do
-      reset_token = create_reset_password_token(user)
+      reset_token = User.create_reset_password_token(user)
       send_reset_password_email(conn, user, reset_token)
 
       conn
@@ -103,7 +103,9 @@ defmodule Pxblog.AccountController do
         |> redirect(to: post_path(conn, :index))
       {:error, changeset} ->
         conn = add_breadcrumb(conn, name: 'Recover Password', url: recover_password_path(conn, :recover_password))
-        render(conn, "reset_password.html", token: token, changeset: changeset)
+        conn
+        |> put_status(400)
+        |> render("reset_password.html", token: token, changeset: changeset)
     end 
   end
 
@@ -156,15 +158,6 @@ defmodule Pxblog.AccountController do
     Map.merge(params, %{"role_id" => default_role.id})
   end
 
-  defp create_reset_password_token(user) do
-    current_time = to_string(:erlang.system_time(:seconds))
-    token = Base.encode16 "#{current_time},#{user.id}"
-    changeset = User.changeset(user, %{reset_password_token: token, reset_password_sent_at: NaiveDateTime.utc_now()})
-    Repo.update(changeset)
-
-    token 
-  end
-
   defp validate_reset_password_token(conn, _) do
     if conn.params["token"] && (user = Repo.get_by(User, reset_password_token: conn.params["token"])) do
       # token is considered expired after one hour
@@ -195,7 +188,8 @@ defmodule Pxblog.AccountController do
 
   defp send_reset_password_email(conn, user, token) do
     reset_path = reset_password_path(conn, :reset_password)
-    reset_password_url = "#{conn.scheme}://#{conn.host}:#{conn.port}#{reset_path}?token=#{token}"
+    port = if conn.port == 80, do: "", else: ":#{conn.port}"
+    reset_password_url = "#{conn.scheme}://#{conn.host}#{port}#{reset_path}?token=#{token}"
     # put mail sending job in a background task
     Task.Supervisor.start_child Pxblog.MailerTask, fn ->
       UserEmail.send_reset_password_email(user, reset_password_url) |> Mailer.deliver
