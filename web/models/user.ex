@@ -42,6 +42,15 @@ defmodule Pxblog.User do
     |> validate_confirmation(:password, message: "does not match password!")
     |> hash_password
   end
+
+  def create_reset_password_token(user) do
+    current_time = to_string(:erlang.system_time(:seconds))
+    token = Base.encode16 "#{current_time},#{user.id}"
+    changeset = Pxblog.User.changeset(user, %{reset_password_token: token, reset_password_sent_at: NaiveDateTime.utc_now()})
+    Repo.update(changeset)
+
+    token 
+  end
   
   defp hash_password(changeset) do
     if password = get_change(changeset, :password) do
