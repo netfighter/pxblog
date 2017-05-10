@@ -35,7 +35,15 @@ defmodule Pxblog.SessionController do
   defp sign_in(user, password, conn) do
     if checkpw(password, user.encrypted_password) do
       conn
-      |> Plug.Conn.put_session(:current_user, %{id: user.id, username: user.username, role_id: user.role.id, admin: user.role.admin})
+      |> Plug.Conn.put_session(
+           :current_user, 
+           %{
+             id: user.id, 
+             username: user.username, 
+             role_id: user.role.id, 
+             admin: user.role.admin
+           }
+         )
       |> Plug.Conn.assign(:current_user, user)
       |> put_flash(:info, "Sign in successful!")
       |> redirect(to: post_path(conn, :index))

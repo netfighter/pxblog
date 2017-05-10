@@ -3,7 +3,12 @@ defmodule Pxblog.AccountControllerTest do
   alias Pxblog.User
   import Pxblog.Factory
 
-  @valid_create_attrs %{email: "test@test.com", username: "test", password: "test123", password_confirmation: "test123"}
+  @valid_create_attrs %{
+    email: "test@test.com", 
+    username: "test", 
+    password: "test123", 
+    password_confirmation: "test123"
+  }
   @valid_update_attrs Map.merge(@valid_create_attrs, %{current_password: "test1234"})
   @valid_attrs %{email: "test@test.com", username: "test"}
   @invalid_attrs %{}
@@ -15,11 +20,20 @@ defmodule Pxblog.AccountControllerTest do
     admin_role = insert(:role, admin: true)
     admin_user = insert(:user, role: admin_role)
 
-    {:ok, conn: build_conn(), admin_role: admin_role, user_role: user_role, user: user, admin_user: admin_user}
+    {
+      :ok, 
+      conn: build_conn(), 
+      admin_role: admin_role, 
+      user_role: user_role, 
+      user: user, 
+      admin_user: admin_user
+    }
   end
 
   defp login_user(conn, user) do
-    post conn, session_path(conn, :create), user: %{email: user.email, password: user.password}
+    post conn, 
+         session_path(conn, :create), 
+         user: %{email: user.email, password: user.password}
   end
 
   test "renders form for new resources", %{conn: conn} do
@@ -67,7 +81,8 @@ defmodule Pxblog.AccountControllerTest do
     assert html_response(conn, 200) =~ "Edit Account"
   end
 
-  test "redirects away from editing when logged in as a different user", %{conn: conn, user: user, admin_user: admin_user} do
+  test "redirects away from editing when logged in as a different user", 
+       %{conn: conn, user: user, admin_user: admin_user} do
     conn = login_user(conn, user)
     conn = get conn, account_path(conn, :edit, admin_user)
     assert get_flash(conn, :error) == "You are not authorized to modify that user!"
@@ -82,7 +97,8 @@ defmodule Pxblog.AccountControllerTest do
     assert conn.halted
   end
 
-  test "updates chosen resource and redirects when logged in and data is valid", %{conn: conn, admin_user: admin_user} do
+  test "updates chosen resource and redirects when logged in and data is valid", 
+       %{conn: conn, admin_user: admin_user} do
     conn = login_user(conn, admin_user)
     conn = put conn, account_path(conn, :update, admin_user), user: @valid_update_attrs
     assert get_flash(conn, :info) == "User updated successfully."
@@ -92,13 +108,16 @@ defmodule Pxblog.AccountControllerTest do
 
   test "validates current password at update", %{conn: conn, admin_user: admin_user} do
     conn = login_user(conn, admin_user)
-    conn = put conn, account_path(conn, :update, admin_user), user: Map.merge(@valid_create_attrs, %{current_password: "wrong", username: "changed"}) 
+    conn = put conn, 
+           account_path(conn, :update, admin_user), 
+           user: Map.merge(@valid_create_attrs, %{current_password: "wrong", username: "changed"}) 
     assert get_flash(conn, :error) == "Invalid current password!"
     assert redirected_to(conn) == account_path(conn, :edit, admin_user)
     refute Repo.get_by(User, username: "changed")
   end
 
-  test "redirects away from update when logged in as a different user", %{conn: conn, user: user, admin_user: admin_user} do
+  test "redirects away from update when logged in as a different user", 
+       %{conn: conn, user: user, admin_user: admin_user} do
     conn = login_user(conn, admin_user)
     conn = put conn, account_path(conn, :update, user), user: @valid_update_attrs
     assert get_flash(conn, :error) == "You are not authorized to modify that user!"
@@ -116,7 +135,8 @@ defmodule Pxblog.AccountControllerTest do
     refute Repo.get(User, user.id)
   end
 
-  test "redirects away from deleting chosen resource when logged in as a different user", %{conn: conn, user_role: user_role, user: user} do
+  test "redirects away from deleting chosen resource when logged in as a different user", 
+       %{conn: conn, user_role: user_role, user: user} do
     new_user = insert(:user, role: user_role)
     conn =
       login_user(conn, new_user)
@@ -126,7 +146,8 @@ defmodule Pxblog.AccountControllerTest do
     assert conn.halted
   end
 
-  test "GET recover_password renders form for the first step of password reset", %{conn: conn} do
+  test "GET recover_password renders form for the first step of password reset", 
+       %{conn: conn} do
     conn = get conn, recover_password_path(conn, :recover_password)
     response = html_response(conn, 200)
     assert response =~ "Recover Password"
@@ -134,7 +155,8 @@ defmodule Pxblog.AccountControllerTest do
     assert response =~ "Send me reset password instructions"
   end
 
-  test "GET recover_password redirects away when already signed in", %{conn: conn, user: user} do
+  test "GET recover_password redirects away when already signed in", 
+       %{conn: conn, user: user} do
     conn = login_user(conn, user)
     conn = get conn, recover_password_path(conn, :recover_password)
     assert get_flash(conn, :error) == "You are already signed in!"
@@ -142,11 +164,15 @@ defmodule Pxblog.AccountControllerTest do
     assert conn.halted
   end
 
-  test "POST recover_password creates a password reset token when data is valid", %{conn: conn, user: user} do
+  test "POST recover_password creates a password reset token when data is valid", 
+       %{conn: conn, user: user} do
     refute user.reset_password_token
-    conn = post conn, recover_password_path(conn, :recover_password), user: %{email: user.email}
+    conn = post conn, 
+           recover_password_path(conn, :recover_password), 
+           user: %{email: user.email}
     
-    assert get_flash(conn, :info) == "You will receive an email with instructions on how to reset your password in a few minutes."
+    assert get_flash(conn, :info) == "You will receive an email with instructions" <>
+                                     " on how to reset your password in a few minutes."
     assert redirected_to(conn) == session_path(conn, :new)
 
     user = Repo.get(User, user.id)
@@ -154,9 +180,12 @@ defmodule Pxblog.AccountControllerTest do
     assert user.reset_password_sent_at
   end
 
-  test "POST recover_password displays validation errors when data is invalid", %{conn: conn, user: user} do
+  test "POST recover_password displays validation errors when data is invalid", 
+       %{conn: conn, user: user} do
     refute user.reset_password_token
-    conn = post conn, recover_password_path(conn, :recover_password), user: %{email: "dummy@test.com"}
+    conn = post conn, 
+           recover_password_path(conn, :recover_password), 
+           user: %{email: "dummy@test.com"}
     
     assert get_flash(conn, :error) == "User account not found."
     assert redirected_to(conn) == recover_password_path(conn, :recover_password)
@@ -166,7 +195,8 @@ defmodule Pxblog.AccountControllerTest do
     refute user.reset_password_sent_at
   end
 
-  test "GET reset_password renders form for the second step of password reset", %{conn: conn, user: user} do
+  test "GET reset_password renders form for the second step of password reset", 
+       %{conn: conn, user: user} do
     token = User.create_reset_password_token(user)
     conn = get conn, reset_password_path(conn, :reset_password), token: token
     response = html_response(conn, 200)
@@ -176,7 +206,8 @@ defmodule Pxblog.AccountControllerTest do
     assert response =~ "Reset password"
   end
 
-  test "GET reset_password redirects away when token is invalid", %{conn: conn, user: user} do
+  test "GET reset_password redirects away when token is invalid", 
+       %{conn: conn, user: user} do
     User.create_reset_password_token(user)
     conn = get conn, reset_password_path(conn, :reset_password), token: "dummy_token"
     assert get_flash(conn, :error) == "Invalid reset password token."
@@ -191,21 +222,33 @@ defmodule Pxblog.AccountControllerTest do
     assert conn.halted
   end
 
-  test "GET reset_password redirects away when token is expired", %{conn: conn, user: user} do
+  test "GET reset_password redirects away when token is expired", 
+       %{conn: conn, user: user} do
     token = User.create_reset_password_token(user)
     user = Repo.get(User, user.id)
-    Repo.update(User.changeset(user, %{reset_password_sent_at: Timex.shift(user.reset_password_sent_at, minutes: -61)}))
+    changes = %{reset_password_sent_at: Timex.shift(user.reset_password_sent_at, minutes: -61)}
+    Repo.update(User.changeset(user, changes))
     conn = get conn, reset_password_path(conn, :reset_password), token: token
     assert get_flash(conn, :error) == "Reset password token has expired."
     assert redirected_to(conn) == post_path(conn, :index)
     assert conn.halted
   end
 
-  test "PUT reset_password creates a new password when data is valid", %{conn: conn, user: user} do
+  test "PUT reset_password creates a new password when data is valid", 
+       %{conn: conn, user: user} do
     token = User.create_reset_password_token(user)
-    conn = put conn, reset_password_path(conn, :reset_password), %{token: token, user: %{password: "test1234", password_confirmation: "test1234"}}
+    conn = put conn, 
+           reset_password_path(conn, :reset_password), 
+           %{
+             token: token, 
+             user: %{
+               password: "test1234", 
+               password_confirmation: "test1234"
+              }
+           }
     
-    assert get_flash(conn, :info) == "Your password has been changed successfully. You are now signed in."
+    assert get_flash(conn, :info) == "Your password has been changed successfully." <>
+                                     " You are now signed in."
     assert redirected_to(conn) == post_path(conn, :index)
 
     user = Repo.get(User, user.id)
@@ -215,15 +258,32 @@ defmodule Pxblog.AccountControllerTest do
   end
 
   test "PUT reset_password redirects away when token is invalid", %{conn: conn} do
-    conn = put conn, reset_password_path(conn, :reset_password), %{token: "dummy_token", user: %{password: "test1234", password_confirmation: "test1234"}}
+    conn = put conn, 
+           reset_password_path(conn, :reset_password), 
+           %{
+             token: "dummy_token", 
+             user: %{
+               password: "test1234", 
+               password_confirmation: "test1234"
+             }
+           }
     assert get_flash(conn, :error) == "Invalid reset password token."
     assert redirected_to(conn) == post_path(conn, :index)
     assert conn.halted
   end
 
-  test "PUT reset_password displays validation errors when data is invalid", %{conn: conn, user: user} do
+  test "PUT reset_password displays validation errors when data is invalid", 
+       %{conn: conn, user: user} do
     token = User.create_reset_password_token(user)
-    conn = put conn, reset_password_path(conn, :reset_password), %{token: token, user: %{password: "test1234", password_confirmation: "test4321"}}
+    conn = put conn, 
+           reset_password_path(conn, :reset_password), 
+           %{
+             token: token, 
+             user: %{
+               password: "test1234", 
+               password_confirmation: "test4321"
+             }
+           }
    
     response = html_response(conn, 400)
     assert response =~ "Recover Password"

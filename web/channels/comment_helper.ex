@@ -54,7 +54,13 @@ defmodule Pxblog.CommentHelper do
     case Repo.insert(changeset) do
       {:ok, comment} ->
         comment = comment |> Repo.preload([:user])
-        {:ok, Map.merge(%{}, %{id: comment.id, author: comment.user.username, author_id: comment.user_id, inserted_at: comment.inserted_at})}
+        response = %{
+          id: comment.id, 
+          author: comment.user.username, 
+          author_id: comment.user_id, 
+          inserted_at: comment.inserted_at
+        }
+        {:ok, Map.merge(%{}, response)}
       {:error, changeset} ->
         {:error, "User is not authorized"}
     end

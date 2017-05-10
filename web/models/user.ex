@@ -25,8 +25,18 @@ defmodule Pxblog.User do
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(struct, params \\ %{}) do
+    allowed_params = [
+      :username, 
+      :email, 
+      :password, 
+      :password_confirmation, 
+      :role_id, 
+      :reset_password_token, 
+      :reset_password_sent_at
+    ]
+
     struct
-    |> cast(params, [:username, :email, :password, :password_confirmation, :role_id, :reset_password_token, :reset_password_sent_at])
+    |> cast(params, allowed_params)
     |> validate_required([:username, :email, :role_id])
     |> unique_constraint(:username)
     |> unique_constraint(:email)
@@ -46,7 +56,11 @@ defmodule Pxblog.User do
   def create_reset_password_token(user) do
     current_time = to_string(:erlang.system_time(:seconds))
     token = Base.encode16 "#{current_time},#{user.id}"
-    changeset = Pxblog.User.changeset(user, %{reset_password_token: token, reset_password_sent_at: NaiveDateTime.utc_now()})
+    changes = %{
+      reset_password_token: token, 
+      reset_password_sent_at: NaiveDateTime.utc_now()
+    }
+    changeset = Pxblog.User.changeset(user, changes)
     Repo.update(changeset)
 
     token 

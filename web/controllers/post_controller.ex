@@ -40,15 +40,27 @@ defmodule Pxblog.PostController do
   end
 
   def show(conn, %{"id" => id}) do
-    conn = add_breadcrumb(conn, name: conn.assigns[:post].title, url: post_path(conn, :show, conn.assigns[:post]))
+    conn = add_breadcrumb(
+      conn, 
+      name: conn.assigns[:post].title, 
+      url: post_path(conn, :show, conn.assigns[:post])
+    )
     comment_changeset = conn.assigns[:post]
       |> build_assoc(:comments)
       |> Pxblog.Comment.changeset()
-    render(conn, "show.html", post: conn.assigns[:post], comment_changeset: comment_changeset)
+
+    render conn, 
+           "show.html", 
+           post: conn.assigns[:post], 
+           comment_changeset: comment_changeset
   end
 
   def edit(conn, %{"id" => id}) do
-    conn = add_breadcrumb(conn, name: conn.assigns[:post].title, url: post_path(conn, :show, conn.assigns[:post]))
+    conn = add_breadcrumb(
+      conn, 
+      name: conn.assigns[:post].title, 
+      url: post_path(conn, :show, conn.assigns[:post])
+    )
     changeset = Post.changeset(conn.assigns[:post])
     render(conn, "edit.html", post: conn.assigns[:post], changeset: changeset)
   end

@@ -27,12 +27,15 @@ defmodule Pxblog.CommentChannelTest do
   end
 
   test "CREATED_COMMENT broadcasts to comments:*", %{socket: socket, post: post} do
-    push socket, "CREATED_COMMENT", %{"body" => "Test Post", "author" => "Test Author", "postId" => post.id}
+    push socket, 
+         "CREATED_COMMENT", 
+         %{"body" => "Test Post", "author" => "Test Author", "postId" => post.id}
     expected = %{"body" => "Test Post", "author" => "Test Author"}
     assert_broadcast "CREATED_COMMENT", expected
   end
 
-  test "DELETED_COMMENT broadcasts to comments:*", %{socket: socket, post: post, comment: comment} do
+  test "DELETED_COMMENT broadcasts to comments:*", 
+       %{socket: socket, post: post, comment: comment} do
     payload = %{"commentId" => comment.id, "postId" => post.id}
     push socket, "DELETED_COMMENT", payload
     assert_broadcast "DELETED_COMMENT", payload

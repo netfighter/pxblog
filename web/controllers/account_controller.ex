@@ -62,7 +62,11 @@ defmodule Pxblog.AccountController do
   end
 
   def recover_password(%{method: "GET"} = conn, _) do
-    conn = add_breadcrumb(conn, name: 'Recover Password', url: recover_password_path(conn, :recover_password))
+    conn = add_breadcrumb(
+      conn, 
+      name: 'Recover Password', 
+      url: recover_password_path(conn, :recover_password)
+    )
     changeset = User.changeset_with_password(%User{})
     render(conn, "recover_password.html", changeset: changeset)
   end
@@ -73,7 +77,8 @@ defmodule Pxblog.AccountController do
       send_reset_password_email(conn, user, reset_token)
 
       conn
-      |> put_flash(:info, "You will receive an email with instructions on how to reset your password in a few minutes.")
+      |> put_flash(:info, "You will receive an email with instructions on how to" <>
+                          " reset your password in a few minutes.")
       |> redirect(to: session_path(conn, :new))
     else
       conn
@@ -84,7 +89,11 @@ defmodule Pxblog.AccountController do
 
   def reset_password(%{method: "GET"} = conn, %{"token" => token}) do
     user = Repo.get_by(User, reset_password_token: token)
-    conn = add_breadcrumb(conn, name: 'Recover Password', url: recover_password_path(conn, :recover_password))
+    conn = add_breadcrumb(
+      conn, 
+      name: 'Recover Password', 
+      url: recover_password_path(conn, :recover_password)
+    )
     changeset = User.changeset_with_password(user)
     render(conn, "reset_password.html", token: token, changeset: User.changeset(user))
   end
@@ -102,7 +111,12 @@ defmodule Pxblog.AccountController do
         |> put_flash(:info, "Your password has been changed successfully. You are now signed in.")
         |> redirect(to: post_path(conn, :index))
       {:error, changeset} ->
-        conn = add_breadcrumb(conn, name: 'Recover Password', url: recover_password_path(conn, :recover_password))
+        conn = add_breadcrumb(
+          conn, 
+          name: 'Recover Password', 
+          url: recover_password_path(conn, :recover_password)
+        )
+
         conn
         |> put_status(400)
         |> render("reset_password.html", token: token, changeset: changeset)
@@ -154,12 +168,18 @@ defmodule Pxblog.AccountController do
   end
 
   defp set_default_role(params) do
-    default_role = Repo.one(from r in Pxblog.Role, where: [admin: false], order_by: [asc: r.id], limit: 1)
+    default_role = Repo.one(
+      from r in Pxblog.Role, 
+      where: [admin: false], 
+      order_by: [asc: r.id], 
+      limit: 1
+    )
     Map.merge(params, %{"role_id" => default_role.id})
   end
 
   defp validate_reset_password_token(conn, _) do
-    if conn.params["token"] && (user = Repo.get_by(User, reset_password_token: conn.params["token"])) do
+    if conn.params["token"] && 
+       (user = Repo.get_by(User, reset_password_token: conn.params["token"])) do
       # token is considered expired after one hour
       if Timex.diff(NaiveDateTime.utc_now(), user.reset_password_sent_at, :minutes) <= 60 do
         conn

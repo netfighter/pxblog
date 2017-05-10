@@ -22,7 +22,19 @@ defmodule Pxblog.CommentChannel do
   def handle_in("CREATED_COMMENT", payload, socket) do
     case CommentHelper.create(payload, socket) do
       {:ok, comment} ->
-        broadcast socket, "CREATED_COMMENT", Map.merge(payload, %{commentId: comment.id, insertedAt: comment.inserted_at, authorId: comment.author_id, author: comment.author})
+        broadcast(
+          socket, 
+          "CREATED_COMMENT", 
+          Map.merge(
+            payload, 
+            %{
+              commentId: comment.id, 
+              insertedAt: comment.inserted_at, 
+              authorId: comment.author_id, 
+              author: comment.author
+            }
+          )
+        )
         {:noreply, socket}
       {:error, _} ->
         {:noreply, socket}
@@ -35,7 +47,15 @@ defmodule Pxblog.CommentChannel do
     user_id = if is_nil(socket.assigns[:user]), do: 0, else: socket.assigns[:user]
     user = Pxblog.Repo.one from u in Pxblog.User, where: u.id == ^user_id, preload: [:role]
     if user do
-      push socket, "CREATED_COMMENT", Map.merge(payload, %{allowedToDelete: user |> can?(:delete, %Pxblog.Comment{id: payload.commentId, user_id: payload.authorId}) })
+      comment = %Pxblog.Comment{id: payload.commentId, user_id: payload.authorId}
+      push(
+        socket, 
+        "CREATED_COMMENT", 
+        Map.merge(
+          payload, 
+          %{allowedToDelete: user |> can?(:delete, comment) }
+        )
+      )
     else
       push socket, "CREATED_COMMENT", payload
     end
