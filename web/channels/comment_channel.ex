@@ -1,6 +1,9 @@
 defmodule Pxblog.CommentChannel do
   use Pxblog.Web, :channel
   alias Pxblog.CommentHelper
+  alias Pxblog.Repo
+  alias Pxblog.User
+  alias Pxblog.Comment
   import Canada.Can, only: [can?: 3]
 
   def join("comments:" <> _comment_id, payload, socket) do
@@ -23,14 +26,14 @@ defmodule Pxblog.CommentChannel do
     case CommentHelper.create(payload, socket) do
       {:ok, comment} ->
         broadcast(
-          socket, 
-          "CREATED_COMMENT", 
+          socket,
+          "CREATED_COMMENT",
           Map.merge(
-            payload, 
+            payload,
             %{
-              commentId: comment.id, 
-              insertedAt: comment.inserted_at, 
-              authorId: comment.author_id, 
+              commentId: comment.id,
+              insertedAt: comment.inserted_at,
+              authorId: comment.author_id,
               author: comment.author
             }
           )
@@ -45,14 +48,14 @@ defmodule Pxblog.CommentChannel do
   intercept ["CREATED_COMMENT"]
   def handle_out("CREATED_COMMENT", payload, socket) do
     user_id = if is_nil(socket.assigns[:user]), do: 0, else: socket.assigns[:user]
-    user = Pxblog.Repo.one from u in Pxblog.User, where: u.id == ^user_id, preload: [:role]
+    user = Repo.one from u in User, where: u.id == ^user_id, preload: [:role]
     if user do
-      comment = %Pxblog.Comment{id: payload.commentId, user_id: payload.authorId}
+      comment = %Comment{id: payload.commentId, user_id: payload.authorId}
       push(
-        socket, 
-        "CREATED_COMMENT", 
+        socket,
+        "CREATED_COMMENT",
         Map.merge(
-          payload, 
+          payload,
           %{allowedToDelete: user |> can?(:delete, comment) }
         )
       )

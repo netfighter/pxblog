@@ -1,5 +1,6 @@
 defmodule Pxblog.UserSocket do
   use Phoenix.Socket
+  alias Phoenix.Token
 
   ## Channels
   channel "comments:*", Pxblog.CommentChannel
@@ -20,7 +21,7 @@ defmodule Pxblog.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
   def connect(%{"token" => token}, socket) do
-    case Phoenix.Token.verify(socket, "user", token, max_age: 1209600) do
+    case Token.verify(socket, "user", token, max_age: 1_209_600) do
       {:ok, user_id} ->
         {:ok, assign(socket, :user, user_id)}
       {:error, reason} ->

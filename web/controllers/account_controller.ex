@@ -1,6 +1,7 @@
 defmodule Pxblog.AccountController do
   use Pxblog.Web, :controller
   use Timex
+  alias Ecto.Changeset
   alias Pxblog.User
   alias Pxblog.Role
   alias Pxblog.UserEmail
@@ -63,8 +64,8 @@ defmodule Pxblog.AccountController do
 
   def recover_password(%{method: "GET"} = conn, _) do
     conn = add_breadcrumb(
-      conn, 
-      name: 'Recover Password', 
+      conn,
+      name: 'Recover Password',
       url: recover_password_path(conn, :recover_password)
     )
     changeset = User.changeset_with_password(%User{})
@@ -90,8 +91,8 @@ defmodule Pxblog.AccountController do
   def reset_password(%{method: "GET"} = conn, %{"token" => token}) do
     user = Repo.get_by(User, reset_password_token: token)
     conn = add_breadcrumb(
-      conn, 
-      name: 'Recover Password', 
+      conn,
+      name: 'Recover Password',
       url: recover_password_path(conn, :recover_password)
     )
     changeset = User.changeset_with_password(user)
@@ -101,8 +102,8 @@ defmodule Pxblog.AccountController do
   def reset_password(%{method: "PUT"} = conn, %{"token" => token, "user" => user_params}) do
     user = Repo.get_by(User, reset_password_token: token)
     changeset = User.changeset_with_password(user, user_params)
-      |> Ecto.Changeset.put_change(:reset_password_token, nil)   
-      |> Ecto.Changeset.put_change(:reset_password_sent_at, nil)  
+      |> Changeset.put_change(:reset_password_token, nil)
+      |> Changeset.put_change(:reset_password_sent_at, nil)
 
     case Repo.update(changeset) do
       {:ok, user} ->
@@ -112,15 +113,15 @@ defmodule Pxblog.AccountController do
         |> redirect(to: post_path(conn, :index))
       {:error, changeset} ->
         conn = add_breadcrumb(
-          conn, 
-          name: 'Recover Password', 
+          conn,
+          name: 'Recover Password',
           url: recover_password_path(conn, :recover_password)
         )
 
         conn
         |> put_status(400)
         |> render("reset_password.html", token: token, changeset: changeset)
-    end 
+    end
   end
 
   def delete(conn, %{"id" => id}) do
@@ -150,7 +151,7 @@ defmodule Pxblog.AccountController do
      password = conn.params["user"]["current_password"]
     if checkpw(password, user.encrypted_password) do
       conn
-    else 
+    else
       conn
       |> put_flash(:error, "Invalid current password!")
       |> redirect(to: account_path(conn, :edit, user))
@@ -169,16 +170,16 @@ defmodule Pxblog.AccountController do
 
   defp set_default_role(params) do
     default_role = Repo.one(
-      from r in Pxblog.Role, 
-      where: [admin: false], 
-      order_by: [asc: r.id], 
+      from r in Role,
+      where: [admin: false],
+      order_by: [asc: r.id],
       limit: 1
     )
     Map.merge(params, %{"role_id" => default_role.id})
   end
 
   defp validate_reset_password_token(conn, _) do
-    if conn.params["token"] && 
+    if conn.params["token"] &&
        (user = Repo.get_by(User, reset_password_token: conn.params["token"])) do
       # token is considered expired after one hour
       if Timex.diff(NaiveDateTime.utc_now(), user.reset_password_sent_at, :minutes) <= 60 do

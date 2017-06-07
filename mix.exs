@@ -46,7 +46,8 @@ defmodule Pxblog.Mixfile do
      {:timex, "~> 3.0"},
      {:phoenix_slime, "~> 0.8.0"},
      {:breadcrumble, "~> 1.0"},
-     {:mix_test_watch, "~> 0.4.0", only: :dev, runtime: false}]
+     {:mix_test_watch, "~> 0.4.0", only: :dev, runtime: false},
+     {:credo, "~> 0.8", only: [:dev, :test], runtime: false}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
