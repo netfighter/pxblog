@@ -3,7 +3,7 @@ defmodule Pxblog.Role do
 
   schema "roles" do
     has_many :users, Pxblog.User
-    
+
     field :name, :string
     field :admin, :boolean, default: false
 

@@ -50,7 +50,7 @@ defmodule Pxblog.UserController do
       changeset = User.changeset(user, user_params)
     else
       changeset = User.changeset_with_password(user, user_params)
-    end  
+    end
 
     case Repo.update(changeset) do
       {:ok, user} ->

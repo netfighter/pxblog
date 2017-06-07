@@ -8,7 +8,7 @@ defmodule Pxblog.UserEmail do
     |> to(user.email)
     |> subject("Welcome to Tiny Blog!")
     |> render_body(
-         "welcome.html", 
+         "welcome.html",
          %{username: user.username, sign_in_url: sign_in_url}
        )
   end
@@ -19,7 +19,7 @@ defmodule Pxblog.UserEmail do
     |> to(user.email)
     |> subject("Tiny Blog reset password instructions")
     |> render_body(
-         "reset_password_instructions.html", 
+         "reset_password_instructions.html",
          %{username: user.username, reset_password_url: reset_password_url}
        )
   end

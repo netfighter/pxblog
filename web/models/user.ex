@@ -2,12 +2,13 @@ defmodule Pxblog.User do
   use Pxblog.Web, :model
   import Comeonin.Bcrypt, only: [hashpwsalt: 1]
   alias Pxblog.Repo
+  alias Pxblog.User
 
   schema "users" do
     has_many :posts, Pxblog.Post
     has_many :comments, Pxblog.Comment
     belongs_to :role, Pxblog.Role
-    
+
     field :username, :string
     field :email, :string
     field :encrypted_password, :string
@@ -18,7 +19,7 @@ defmodule Pxblog.User do
 
     # Virtual Fields
     field :password, :string, virtual: true
-    field :password_confirmation, :string, virtual: true  
+    field :password_confirmation, :string, virtual: true
   end
 
   @doc """
@@ -26,12 +27,12 @@ defmodule Pxblog.User do
   """
   def changeset(struct, params \\ %{}) do
     allowed_params = [
-      :username, 
-      :email, 
-      :password, 
-      :password_confirmation, 
-      :role_id, 
-      :reset_password_token, 
+      :username,
+      :email,
+      :password,
+      :password_confirmation,
+      :role_id,
+      :reset_password_token,
       :reset_password_sent_at
     ]
 
@@ -57,15 +58,15 @@ defmodule Pxblog.User do
     current_time = to_string(:erlang.system_time(:seconds))
     token = Base.encode16 "#{current_time},#{user.id}"
     changes = %{
-      reset_password_token: token, 
+      reset_password_token: token,
       reset_password_sent_at: NaiveDateTime.utc_now()
     }
-    changeset = Pxblog.User.changeset(user, changes)
+    changeset = User.changeset(user, changes)
     Repo.update(changeset)
 
-    token 
+    token
   end
-  
+
   defp hash_password(changeset) do
     if password = get_change(changeset, :password) do
       changeset

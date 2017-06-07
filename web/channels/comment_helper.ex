@@ -12,7 +12,7 @@ defmodule Pxblog.CommentHelper do
 
     if user |> can?(:create, Pxblog.Comment) do
       create_comment(post, user, body)
-    else 
+    else
       {:error, "User is not authorized"}
     end
   end
@@ -39,7 +39,7 @@ defmodule Pxblog.CommentHelper do
   end
 
   defp get_post(post_id) do
-    Repo.get!(Post, post_id) 
+    Repo.get!(Post, post_id)
   end
 
   defp get_comment(comment_id) do
@@ -55,9 +55,9 @@ defmodule Pxblog.CommentHelper do
       {:ok, comment} ->
         comment = comment |> Repo.preload([:user])
         response = %{
-          id: comment.id, 
-          author: comment.user.username, 
-          author_id: comment.user_id, 
+          id: comment.id,
+          author: comment.user.username,
+          author_id: comment.user_id,
           inserted_at: comment.inserted_at
         }
         {:ok, Map.merge(%{}, response)}
