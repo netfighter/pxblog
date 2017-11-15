@@ -8,17 +8,17 @@ input type="hidden" id="post-id" value="#{@post.id}"
     .pull-right
       div class="btn-toolbar" role="toolbar"
         div class="btn-group"
-          = link to: post_path(@conn, :index), class: "btn btn-default", aria: [label: "Left Align"] do
+          = link to: post_path(@conn, :index), class: "btn btn-default btn-xs", aria: [label: "Left Align"] do
             small
               i class="glyphicon glyphicon-chevron-left" 
               | &nbsp;Back
           = if @conn.assigns[:current_user] |> can?(:edit, @post) do
-            = link to: post_path(@conn, :edit, @post), class: "btn btn-default", aria: [label: "Center Align"] do
+            = link to: post_path(@conn, :edit, @post), class: "btn btn-default btn-xs", aria: [label: "Center Align"] do
               small
                 i class="glyphicon glyphicon-pencil" 
                 | &nbsp;Edit
           = if @conn.assigns[:current_user] |> can?(:delete, @post) do
-            = link to: post_path(@conn, :delete, @post), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-default .pull-right", aria: [label: "Justify"] do
+            = link to: post_path(@conn, :delete, @post), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-default btn-xs", aria: [label: "Justify"] do
               small
                 i class="glyphicon glyphicon-remove" 
                 | &nbsp;Delete
