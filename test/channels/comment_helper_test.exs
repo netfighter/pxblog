@@ -1,8 +1,8 @@
-defmodule Pxblog.CommentHelperTest do
+defmodule PxblogWeb.CommentHelperTest do
   use Pxblog.ModelCase
 
   alias Pxblog.Comment
-  alias Pxblog.CommentHelper
+  alias PxblogWeb.CommentHelper
 
   import Pxblog.Factory
 

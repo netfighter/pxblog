@@ -8,7 +8,7 @@ use Mix.Config
 # file or create a script for recreating it, since it's
 # kept out of version control and might be hard to recover
 # or recreate for your teammates (or you later on).
-config :pxblog, Pxblog.Endpoint,
+config :pxblog, PxblogWeb.Endpoint,
   secret_key_base: "xwgQ6XnCoYCdloCQB/m5VZSBdwRhM3/WaEkb2yftrN6uLqSzcemvet6QVNy4ynxG"
 
 # Configure your database
