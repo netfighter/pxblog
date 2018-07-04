@@ -1,5 +1,5 @@
-defmodule Pxblog.PostControllerTest do
-  use Pxblog.ConnCase
+defmodule PxblogWeb.PostControllerTest do
+  use PxblogWeb.ConnCase
   alias Pxblog.Post
   import Pxblog.Factory
 

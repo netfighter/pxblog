@@ -1,6 +1,6 @@
-defmodule Pxblog.Helpers.ViewHelpersTest do
-  use Pxblog.ConnCase, async: true
-  alias Pxblog.Helpers.ViewHelpers
+defmodule PxblogWeb.Helpers.ViewHelpersTest do
+  use PxblogWeb.ConnCase, async: true
+  alias PxblogWeb.Helpers.ViewHelpers
   import Pxblog.Factory
 
    setup do

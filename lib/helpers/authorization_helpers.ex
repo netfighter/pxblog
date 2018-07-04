@@ -1,4 +1,4 @@
-defmodule Pxblog.Helpers.AuthorizationHelpers do
+defmodule PxblogWeb.Helpers.AuthorizationHelpers do
   import Plug.Conn
   import Phoenix.Controller, only: [put_flash: 3, redirect: 2]
 

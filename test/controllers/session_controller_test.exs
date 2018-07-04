@@ -1,5 +1,5 @@
-defmodule Pxblog.SessionControllerTest do
-  use Pxblog.ConnCase
+defmodule PxblogWeb.SessionControllerTest do
+  use PxblogWeb.ConnCase
   import Pxblog.Factory
 
   setup do

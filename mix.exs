@@ -3,7 +3,7 @@ defmodule Pxblog.Mixfile do
 
   def project do
     [app: :pxblog,
-     version: "0.0.1",
+     version: "1.0.0",
      elixir: "~> 1.6.2",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
@@ -17,37 +17,38 @@ defmodule Pxblog.Mixfile do
   #
   # Type `mix help compile.app` for more information.
   def application do
-    [mod: {Pxblog, []},
+    [mod: {Pxblog.Application, []},
      applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
                     :phoenix_ecto, :postgrex, :comeonin, :phoenix_swoosh, :ex_machina]]
   end
 
   # Specifies which paths to compile per environment.
-  defp elixirc_paths(:test), do: ["lib", "web", "test/support"]
-  defp elixirc_paths(_),     do: ["lib", "web"]
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_),     do: ["lib"]
 
   # Specifies your project dependencies.
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    [{:phoenix, "~> 1.3.0"},
+    [{:phoenix, "~> 1.3.3"},
      {:phoenix_pubsub, "~> 1.0"},
-     {:phoenix_ecto, "~> 3.0"},
+     {:phoenix_ecto, "~> 3.2"},
      {:postgrex, ">= 0.0.0"},
-     {:phoenix_html, "~> 2.6"},
+     {:phoenix_html, "~> 2.10"},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
-     {:comeonin, "~> 2.5.2"},
-     {:canary, "~> 1.1.0"},
+     {:comeonin, "~> 4.0"},
+     {:bcrypt_elixir, "~> 0.12"},
+     {:canary, "~> 1.1.1"},
      {:phoenix_swoosh, "~> 0.2"},
-     {:ex_machina, "~> 1.0"},
-     {:earmark, "~> 1.0.1"},
-     {:timex, "~> 3.0"},
-     {:phoenix_slime, "~> 0.8.0"},
-     {:breadcrumble, "~> 1.0"},
-     {:mix_test_watch, "~> 0.4.0", only: :dev, runtime: false},
-     {:credo, "~> 0.8", only: [:dev, :test], runtime: false}]
+     {:ex_machina, "~> 2.2"},
+     {:earmark, "~> 1.2.4"},
+     {:timex, "~> 3.3.0"},
+     {:phoenix_slime, "~> 0.10"},
+     {:breadcrumble, "~> 1.0.4"},
+     {:mix_test_watch, "~> 0.6", only: :dev, runtime: false},
+     {:credo, "~> 0.9.3", only: [:dev, :test], runtime: false}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.

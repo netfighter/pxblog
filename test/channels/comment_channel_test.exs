@@ -1,7 +1,7 @@
-defmodule Pxblog.CommentChannelTest do
-  use Pxblog.ChannelCase
+defmodule PxblogWeb.CommentChannelTest do
+  use PxblogWeb.ChannelCase
 
-  alias Pxblog.CommentChannel
+  alias PxblogWeb.CommentChannel
   import Pxblog.Factory
 
   setup do
@@ -27,14 +27,14 @@ defmodule Pxblog.CommentChannelTest do
   end
 
   test "CREATED_COMMENT broadcasts to comments:*", %{socket: socket, post: post} do
-    push socket, 
-         "CREATED_COMMENT", 
+    push socket,
+         "CREATED_COMMENT",
          %{"body" => "Test Post", "author" => "Test Author", "postId" => post.id}
     expected = %{"body" => "Test Post", "author" => "Test Author"}
     assert_broadcast "CREATED_COMMENT", expected
   end
 
-  test "DELETED_COMMENT broadcasts to comments:*", 
+  test "DELETED_COMMENT broadcasts to comments:*",
        %{socket: socket, post: post, comment: comment} do
     payload = %{"commentId" => comment.id, "postId" => post.id}
     push socket, "DELETED_COMMENT", payload

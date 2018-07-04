@@ -1,5 +1,5 @@
-defmodule Pxblog.AccountControllerTest do
-  use Pxblog.ConnCase
+defmodule PxblogWeb.AccountControllerTest do
+  use PxblogWeb.ConnCase
   alias Pxblog.User
   import Pxblog.Factory
 

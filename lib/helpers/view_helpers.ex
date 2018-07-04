@@ -1,4 +1,4 @@
-defmodule Pxblog.Helpers.ViewHelpers do
+defmodule PxblogWeb.Helpers.ViewHelpers do
   use Timex
 
   def format_date(date) do

@@ -1,4 +1,4 @@
-defmodule Pxblog.ConnCase do
+defmodule PxblogWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -25,10 +25,10 @@ defmodule Pxblog.ConnCase do
       import Ecto.Changeset
       import Ecto.Query
 
-      import Pxblog.Router.Helpers
+      import PxblogWeb.Router.Helpers
 
       # The default endpoint for testing
-      @endpoint Pxblog.Endpoint
+      @endpoint PxblogWeb.Endpoint
     end
   end
 

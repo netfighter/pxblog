@@ -1,4 +1,4 @@
-defmodule Pxblog.ChannelCase do
+defmodule PxblogWeb.ChannelCase do
   @moduledoc """
   This module defines the test case to be used by
   channel tests.
@@ -27,7 +27,7 @@ defmodule Pxblog.ChannelCase do
 
 
       # The default endpoint for testing
-      @endpoint Pxblog.Endpoint
+      @endpoint PxblogWeb.Endpoint
     end
   end
 
