@@ -45,10 +45,10 @@ defmodule PxblogWeb.AccountController do
 
   def update(conn, %{"id" => id, "user" => user_params}) do
     user = Repo.get!(User, id)
-    if is_nil(user_params["password"]) || user_params["password"] == "" do
-      changeset = User.changeset(user, user_params)
+    changeset = if is_nil(user_params["password"]) || user_params["password"] == "" do
+      User.changeset(user, user_params)
     else
-      changeset = User.changeset_with_password(user, user_params)
+      User.changeset_with_password(user, user_params)
     end
 
     case Repo.update(changeset) do
@@ -179,8 +179,8 @@ defmodule PxblogWeb.AccountController do
   end
 
   defp validate_reset_password_token(conn, _) do
-    if conn.params["token"] &&
-       (user = Repo.get_by(User, reset_password_token: conn.params["token"])) do
+    user = Repo.get_by(User, reset_password_token: conn.params["token"])
+    if conn.params["token"] && user do
       # token is considered expired after one hour
       if Timex.diff(NaiveDateTime.utc_now(), user.reset_password_sent_at, :minutes) <= 60 do
         conn

@@ -22,7 +22,6 @@ defmodule PxblogWeb.UserController do
   def create(conn, %{"user" => user_params}) do
     roles = Repo.all(Role)
     changeset = User.changeset_with_password(%User{}, user_params)
-
     case Repo.insert(changeset) do
       {:ok, _user} ->
         conn
@@ -46,10 +45,10 @@ defmodule PxblogWeb.UserController do
     roles = Repo.all(Role)
     user = Repo.get!(User, id)
 
-    if is_nil(user_params["password"]) || user_params["password"] == "" do
-      changeset = User.changeset(user, user_params)
+    changeset = if is_nil(user_params["password"]) || user_params["password"] == "" do
+      User.changeset(user, user_params)
     else
-      changeset = User.changeset_with_password(user, user_params)
+      User.changeset_with_password(user, user_params)
     end
 
     case Repo.update(changeset) do
